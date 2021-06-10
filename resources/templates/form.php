@@ -1,5 +1,5 @@
 <?php
-/** @var \App\Types\FormElement $element */
+/** @var \App\Admin\Fields\FormElement $element */
 /** @var \League\Plates\Template\Template $this */
 ?>
 <form <?=\Kyanag\Form\renderAttributes([
@@ -12,7 +12,7 @@
 ])?>>
     <?=csrf_field()?>
     <?php foreach($element->children as $child){
-        app("renderer")->render($child);
+        echo app("renderer")->render($child);
     } ?>
     <div class="form-group row">
         <div class="col-md-2"><?=$this->e($element->label)?></div>

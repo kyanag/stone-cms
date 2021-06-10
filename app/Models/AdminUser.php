@@ -27,5 +27,8 @@ class AdminUser extends Authenticatable
     ];
 
 
-
+    public function getRememberTokenName()
+    {
+        return null;
+    }
 }

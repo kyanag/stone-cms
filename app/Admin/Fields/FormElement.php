@@ -1,9 +1,10 @@
 <?php
 
 
-namespace App\Types;
+namespace App\Admin\Fields;
 
 
+use Kyanag\Form\Core\ArrayElement;
 use Kyanag\Form\Interfaces\Element;
 
 
@@ -19,7 +20,7 @@ use Kyanag\Form\Interfaces\Element;
  * @property string $title
  * @property string $description
  */
-interface FormElement extends Element
+class FormElement extends ArrayElement
 {
 
 }

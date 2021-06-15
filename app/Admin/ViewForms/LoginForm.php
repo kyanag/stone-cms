@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Admin\ViewModels;
+namespace App\Admin\ViewForms;
 
 
 use Kyanag\Form\Core\ArrayElement;
@@ -9,7 +9,7 @@ use Kyanag\Form\Core\ArrayElement;
 class LoginForm extends Form
 {
 
-    public function fields()
+    public function getFields()
     {
         $items = [
             [

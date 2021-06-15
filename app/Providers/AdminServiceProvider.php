@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Admin\Supports\Tree;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Kyanag\Form\Core\Factory;
@@ -37,5 +39,9 @@ class AdminServiceProvider extends ServiceProvider
         $renderer->setCast("form", "stone::form");
 
         View::addNamespace("admin", resource_path("views/admin"));
+
+        Collection::macro("toTreeList", function($name, $p_name, $p_id = 0){
+            return (new Tree($this->items))->toTreeList(collect(), $name, $p_name, $p_id, 0);
+        });
     }
 }

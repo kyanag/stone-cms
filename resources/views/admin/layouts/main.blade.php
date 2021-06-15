@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,7 +20,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 </head>
 <body>
-<header class="navbar navbar-expand bg-darkblue">
+<header class="navbar navbar-expand bg-darkblue fixed-top">
     <a class="navbar-brand mr-0 mr-md-2" href="/">
         StoneCMS
     </a>
@@ -30,47 +29,61 @@
             <li class="nav-item">
                 <a class="nav-link" href="/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Bootstrap');">首页</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="/docs/getting-started/introduction/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Docs');">中文文档</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/docs/examples/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Examples');">示例</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://icons.bootcss.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Icons');" target="_blank" rel="noopener">图标库</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://themes.getbootstrap.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Themes');" target="_blank" rel="noopener">模板/主题</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://www.youzhan.org/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Expo');" target="_blank" rel="noopener">优站精选</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://blog.getbootstrap.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Blog');" target="_blank" rel="noopener">官方博客</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://www.sasscss.com/" target="_blank" rel="noopener">Sass</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://www.rollupjs.com/" target="_blank" rel="noopener">rollup.js</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://www.babeljs.cn/" target="_blank" rel="noopener">Babel</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://www.gohugo.cn/" target="_blank" rel="noopener">Hugo</a>
-            </li>
+
         </ul>
     </div>
+    <ul class="navbar-nav ml-md-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown" aria-expanded="false">
+                {{ \Illuminate\Support\Facades\Auth::guard("admin")->user()->nickname }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-md-right" aria-labelledby="bd-versions">
+                <a class="dropdown-item active" href="https://v4.bootcss.com/">最新版本 (4.6.x)</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="https://v5.bootcss.com/">v5 版本</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="https://v3.bootcss.com/">v3 版本</a>
+                <a class="dropdown-item" href="https://v2.bootcss.com/">v2 版本</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/docs/versions/">退出</a>
+            </div>
+        </li>
+    </ul>
 </header>
-<main role="main" class="flex-xl-nowrap">
+<main role="main">
     <div id="sidebar">
-
+        <div id="sidenav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">控制台</a>
+                </li>
+                <li class="nav-item">
+                    <strong class="nav-link">栏目</strong>
+                </li>
+                <li class="nav-item">
+                    <strong class="nav-link">内容</strong>
+                </li>
+                <li class="nav-item">
+                    <strong class="nav-link">系统</strong>
+                </li>
+            </ul>
+        </div>
     </div>
     <div id="content">
-        @yield("main")
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-10 offset-1">
+                    <div class="pt-5"></div>
+                    @yield("main")
+                </div>
+            </div>
+        </div>
+        <footer>
+
+        </footer>
     </div>
 </main>
+
 </body>
 
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>

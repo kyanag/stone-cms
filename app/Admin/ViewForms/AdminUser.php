@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Admin\ViewModels;
+namespace App\Admin\ViewForms;
 
 
 class AdminUser

@@ -11,7 +11,7 @@ class LoginForm extends Form
 
     public function getFields()
     {
-        $items = [
+        return array2FormFields([
             [
                 'type' => "input",
                 'name' => "username",
@@ -27,10 +27,7 @@ class LoginForm extends Form
                 'name' => "remember_me",
                 'label' => "记住我",
             ],
-        ];
-        return array_map(function($item){
-            return new ArrayElement($item);
-        }, $items);
+        ]);
     }
 
 }

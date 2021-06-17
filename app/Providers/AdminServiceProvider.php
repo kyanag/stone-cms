@@ -25,6 +25,7 @@ class AdminServiceProvider extends ServiceProvider
             $p->addFolder("stone", resource_path("templates"));
             return new Renderer($p);
         });
+        require_once app_path("Admin/functions.php");
     }
 
     /**

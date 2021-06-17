@@ -4,7 +4,7 @@
 namespace App\Admin\Controllers;
 
 
-use App\Admin\ViewForms\CommonForm;
+use App\Admin\ViewForms\GeneralForm;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\AdminMenu;
 use Illuminate\Http\Request;
@@ -17,17 +17,13 @@ class AdminMenuController extends Controller
 
     public $name = "菜单";
 
-
-    public function getModelClass()
-    {
-        return AdminMenu::class;
-    }
+    protected $modelClass = AdminMenu::class;
 
 
     public function getForm()
     {
         $parent_options = AdminMenu::toOptions();
-        return new CommonForm([
+        return GeneralForm::fromArray([
             [
                 'type' => "input",
                 'name' => "title",
@@ -37,7 +33,7 @@ class AdminMenuController extends Controller
                 'type' => "input",
                 'name' => "url",
                 'label' => "菜单地址",
-                'help' => "前缀`@url`/`@route`"
+                'help' => "<a>前缀`@url`/`@route`</a>"
             ],
             [
                 'type' => "select",

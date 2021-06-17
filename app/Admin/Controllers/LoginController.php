@@ -17,7 +17,6 @@ class LoginController extends Controller
         return view("admin::login", [
             'loginForm' => $loginForm
         ]);
-        return ;
     }
 
     public function login(Request $request){

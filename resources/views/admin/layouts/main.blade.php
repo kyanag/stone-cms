@@ -50,6 +50,9 @@
         </li>
     </ul>
 </header>
+
+@include("admin::toolkits.message")
+
 <main role="main">
     <div id="sidebar">
         <div id="sidenav">
@@ -85,7 +88,7 @@
 </main>
 
 </body>
-
+<script src="{{ asset("/storage/js/main.js") }}"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.js"></script>
 

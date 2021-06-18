@@ -4,23 +4,20 @@
 namespace App\Admin\Controllers;
 
 
-use App\Admin\ViewForms\Form;
-use App\Admin\ViewGrids\Grid;
-use App\Models\Admin\AdminMenu;
+use App\Admin\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 
 trait QuickControllerTrait
 {
 
     /**
-     * @return Form
+     * @return Widget
      */
     abstract public function getForm(Request $request);
 
     /**
-     * @return Grid
+     * @return Widget
      */
     abstract public function getGrid(Request $request);
 
@@ -45,10 +42,6 @@ trait QuickControllerTrait
      */
     public function create(Request $request)
     {
-        session()->flash("success", "保存成功!");
-        session()->flash("danger", "保存失败!");
-        session()->flash("warning", "有产品不存在已经改为库存!");
-
         $url = action([static::class, "store"]);
         $form = $this->getForm($request)->toElement($url, "POST");
         return view("admin::common.create", [

@@ -23,7 +23,7 @@ class AdminMenuController extends Controller
     public function getForm()
     {
         $parent_options = AdminMenu::toOptions();
-        return GeneralForm::fromArray([
+        return new GeneralForm([
             [
                 'type' => "input",
                 'name' => "title",

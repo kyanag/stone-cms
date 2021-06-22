@@ -4,8 +4,8 @@
 namespace App\Admin\Widgets;
 
 
-abstract class Widget
+interface Widget
 {
 
-    abstract public function render();
+    public function render();
 }

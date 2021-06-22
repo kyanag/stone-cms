@@ -43,7 +43,7 @@ trait QuickControllerTrait
     public function create(Request $request)
     {
         $url = action([static::class, "store"]);
-        $form = $this->getForm($request)->toElement($url, "POST");
+        $form = $this->getForm($request)->with($url, "POST");
         return view("admin::common.create", [
             'form' => $form,
             'title' => "新增 - {$this->name}",

@@ -36,7 +36,6 @@ class LoginController extends Controller
     }
 
     public function entry(){
-
         return view("admin::login", [
             'loginForm' => $this->getForm(),
         ]);
@@ -55,5 +54,11 @@ class LoginController extends Controller
         }else{
             return 1;
         }
+    }
+
+    public function logout(){
+        //Auth::guard("admin")->logout();
+        throw new \Exception("保存失败!");
+        return redirect(route("admin.login"));
     }
 }

@@ -4,12 +4,17 @@ namespace App\Models\Admin;
 
 use App\Admin\Supports\Tree;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class AdminMenu extends Model
 {
     //
     protected $guarded = [];
 
+
+    protected $appends = [
+        'path'
+    ];
 
 
     public function getPathAttribute(){
@@ -23,7 +28,6 @@ class AdminMenu extends Model
             switch ($type){
                 case "@route:":
                     return route($param);
-                case "":
             }
         }
         return $this->url;
@@ -31,7 +35,7 @@ class AdminMenu extends Model
 
 
 
-    public static function toOptions(){
+    public static function options(){
         $items = AdminMenu::query()->get()->toArray();
 
         $items = (new Tree($items))->toTreeList(collect(), "id", "p_id", 0);
@@ -44,5 +48,18 @@ class AdminMenu extends Model
             'title' => "根",
             'value' => 0,
         ])->values()->toArray();
+    }
+
+    public static function tree(){
+        if(env("APP_DEBUG", false)){
+            $items = AdminMenu::query()->get()->toArray();
+            $tree = (new Tree($items))->toTree("id", "p_id", 0);
+            return $tree;
+        }
+        return Cache::tags("admin-menu.index")->remember("admin-menu.tree", 2 * 60, function(){
+            $items = AdminMenu::query()->get()->toArray();
+            $tree = (new Tree($items))->toTree("id", "p_id", 0);
+            return $tree;
+        });
     }
 }

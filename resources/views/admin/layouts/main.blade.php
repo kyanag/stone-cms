@@ -37,15 +37,8 @@
             <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown" aria-expanded="false">
                 {{ \Illuminate\Support\Facades\Auth::guard("admin")->user()->nickname }}
             </a>
-            <div class="dropdown-menu dropdown-menu-md-right" aria-labelledby="bd-versions">
-                <a class="dropdown-item active" href="https://v4.bootcss.com/">最新版本 (4.6.x)</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://v5.bootcss.com/">v5 版本</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://v3.bootcss.com/">v3 版本</a>
-                <a class="dropdown-item" href="https://v2.bootcss.com/">v2 版本</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/docs/versions/">退出</a>
+            <div class="dropdown-menu dropdown-menu-md-right">
+                <a class="dropdown-item stone-clickajax" data-method="POST" data-url="{{ route("admin.logout") }}" data-confirm="确认退出？">退出</a>
             </div>
         </li>
     </ul>
@@ -57,18 +50,28 @@
     <div id="sidebar">
         <div id="sidenav">
             <ul class="nav flex-column">
+                @foreach(\App\Models\Admin\AdminMenu::tree() as $item)
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">控制台</a>
+                    @if(count($item['_children']) > 0)
+                        <div class="nav-link hover dropdown-toggle" href="{{ @$item['path'] }}">{{ $item['title'] }}</div>
+                    @else
+                        <div class="nav-header hover">
+                            <a class="nav-link" href="{{ @$item['path'] }}"></a>
+                            {{ $item['title'] }} <div class="float-right pr-2 hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
+                        </div>
+                    @endif
+
+                    @if(count($item['_children']))
+                    <ul class="nav flex-column">
+                        @foreach($item['_children'] as $item)
+                        <li class="nav-item">
+                            <a class="active" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    @endif
                 </li>
-                <li class="nav-item">
-                    <strong class="nav-link">栏目</strong>
-                </li>
-                <li class="nav-item">
-                    <strong class="nav-link">内容</strong>
-                </li>
-                <li class="nav-item">
-                    <strong class="nav-link">系统</strong>
-                </li>
+                @endforeach
             </ul>
         </div>
     </div>

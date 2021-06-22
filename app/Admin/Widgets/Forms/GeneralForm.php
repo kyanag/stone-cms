@@ -9,10 +9,11 @@ use App\Admin\Widgets\Widget;
 use Kyanag\Form\Interfaces\ChooseElement;
 use Kyanag\Form\Interfaces\Element;
 
-class GeneralForm extends Widget implements Element
+class GeneralForm implements Element, Widget
 {
 
     use ElementWidgetTrait;
+    use ActiveFormTrait;
 
     /**
      * @var array<Element>
@@ -24,8 +25,6 @@ class GeneralForm extends Widget implements Element
     public $method;
 
     public $enctype;
-
-    public $attributes = [];
 
     public function setValue($values)
     {
@@ -50,6 +49,18 @@ class GeneralForm extends Widget implements Element
             }
         });
         return $this;
+    }
+
+    public function with($url = null, $method = null, $enctype = null){
+        $this->action = $url;
+        $this->method = $method;
+        $this->enctype = $enctype;
+        return $this;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 
     public function render()

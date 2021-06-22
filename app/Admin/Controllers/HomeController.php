@@ -10,7 +10,6 @@ class HomeController extends Controller
 {
 
     public function home(){
-        session()->flash("danger", "test-delay");
         return view("admin::home");
     }
 

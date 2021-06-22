@@ -36,7 +36,7 @@ class Tree
 
 
     public function toTree($name = "id", $p_name = "p_id", $p_id = 0, $depth = 0){
-        if($depth >= count($this->items)){
+        if($depth > count($this->items)){
             //树深度不能超过
             throw new \Exception("树数据异常，存在环形");
         }

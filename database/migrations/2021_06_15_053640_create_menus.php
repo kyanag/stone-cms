@@ -18,6 +18,7 @@ class CreateMenus extends Migration
             $table->string("title")->comment("菜单标题");
             $table->string("url")->comment("菜单地址 地址/路由/js/");
             $table->unsignedInteger("p_id")->default(0)->comment("上级菜单id");
+            $table->tinyInteger("index")->default(0)->comment("排序");
             $table->tinyInteger("status")->comment("0正常 1停用");
             $table->timestamps();
         });

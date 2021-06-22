@@ -1,4 +1,4 @@
-<div class="toolkit-alert position-fixed stone-delay-destroy">
+<div class="toolkit-alert position-fixed">
     @foreach(['danger', 'warning', 'success', 'info'] as $msg)
         @if(session()->has($msg))
             <div class="alert alert-{{ $msg }}" role="alert">

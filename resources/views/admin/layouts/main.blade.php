@@ -15,11 +15,11 @@
     <link href="https://cdn.bootcdn.net/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
-    <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.css" rel="stylesheet">
+{{--    <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.css" rel="stylesheet">--}}
     <link href="{{ asset("/storage/css/style.css") }}" rel="stylesheet">
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 </head>
-<body>
+<body class="bg-light">
 <header class="navbar navbar-expand bg-darkblue fixed-top">
     <a class="navbar-brand mr-0 mr-md-2" href="/">
         StoneCMS
@@ -51,13 +51,13 @@
         <div id="sidenav">
             <ul class="nav flex-column">
                 @foreach(\App\Models\Admin\AdminMenu::tree() as $item)
-                <li class="nav-item">
+                <li class="nav-item hover">
                     @if(count($item['_children']) > 0)
                         <div class="nav-link hover dropdown-toggle" href="{{ @$item['path'] }}">{{ $item['title'] }}</div>
                     @else
-                        <div class="nav-header hover">
-                            <a class="nav-link" href="{{ @$item['path'] }}"></a>
-                            {{ $item['title'] }} <div class="float-right pr-2 hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
+                        <div class="nav-link">
+                            <a href="{{ @$item['path'] }}" class="pr-1">{{ $item['title'] }}</a>
+                            <div class="float-right px-2 hover-show hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
                         </div>
                     @endif
 
@@ -93,7 +93,7 @@
 </body>
 <script src="{{ asset("/storage/js/main.js") }}"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.js"></script>
+{{--<script src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.js"></script>--}}
 
 <script src="https://cdn.bootcdn.net/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"></script>
 

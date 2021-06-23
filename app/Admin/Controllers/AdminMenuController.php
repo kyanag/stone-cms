@@ -71,6 +71,6 @@ class AdminMenuController extends Controller
 
     public function getGrid(Request $request)
     {
-        // TODO: Implement getGrid() method.
+        return Factory::makeViewGrid();
     }
 }

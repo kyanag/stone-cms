@@ -9,7 +9,7 @@
     {{--    <h2>Section title</h2>--}}
     <div class="container-fluid">
         {!!
-            $form->render()
+            $grid->render()
         !!}
     </div>
 @endsection

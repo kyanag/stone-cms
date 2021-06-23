@@ -5,6 +5,7 @@ namespace App\Admin\Supports;
 
 
 use App\Admin\Widgets\Forms\GeneralForm;
+use App\Admin\Widgets\Grids\GeneralGrid;
 use Kyanag\Form\Core\ArrayElement;
 use Kyanag\Form\Interfaces\Element;
 
@@ -35,6 +36,11 @@ class Factory
         }, $properties['fields']);
         static::setProperties($form, $properties);
         return $form;
+    }
+
+    public static function makeViewGrid($properties = []){
+        $grid = new GeneralGrid();
+        return $grid;
     }
 
 

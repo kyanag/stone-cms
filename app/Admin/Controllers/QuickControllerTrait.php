@@ -4,6 +4,7 @@
 namespace App\Admin\Controllers;
 
 
+use App\Admin\Interfaces\Repository;
 use App\Admin\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -22,6 +23,11 @@ trait QuickControllerTrait
     abstract public function getGrid(Request $request);
 
     /**
+     * @return Repository
+     */
+    abstract public function getRepository();
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -32,6 +38,7 @@ trait QuickControllerTrait
         $grid = $this->getGrid($request);
         return view("admin::common.index", [
             'grid' => $grid,
+            'title' => "{$this->name} 列表",
         ]);
     }
 
@@ -62,8 +69,7 @@ trait QuickControllerTrait
         $attributes = $form->extract($request);
 
         /** @var Model $model */
-        $model = new $this->modelClass;
-        $model->fill($attributes);
+        $model = $this->getRepository()->newModel($attributes);
         if($model->save()){
             session()->flash("success", "保存成功!");
             return back();

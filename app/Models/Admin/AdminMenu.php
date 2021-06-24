@@ -17,6 +17,18 @@ class AdminMenu extends Model
     ];
 
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function($model){
+            //检测上级菜单是否形成环
+        });
+
+        static::saved(function($model){
+            //更新树缓存
+        });
+    }
+
     public function getPathAttribute(){
         if(substr($this->url, 0, 1) == "@"){
             $resource_path = $this->url;
@@ -32,7 +44,6 @@ class AdminMenu extends Model
         }
         return $this->url;
     }
-
 
 
     public static function options(){

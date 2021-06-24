@@ -30,6 +30,7 @@ class GeneralForm implements Element, Widget
     {
         $this->fields = array_map(function(Element $child) use($values){
             $child->value = @$values[$child->name];
+            return $child;
         }, $this->fields);
 
         //同步值到字段里

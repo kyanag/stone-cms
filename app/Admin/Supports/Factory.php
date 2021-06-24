@@ -12,6 +12,15 @@ use Kyanag\Form\Interfaces\Element;
 class Factory
 {
 
+    static protected $instances = [];
+
+    public static function instance($id, $creator){
+        if(!isset(static::$instances[$id])){
+            static::$instances[$id] = call_user_func($creator);
+        }
+        return static::$instances[$id];
+    }
+
     /**
      * @param array $item
      * @return Element
@@ -40,6 +49,7 @@ class Factory
 
     public static function makeViewGrid($properties = []){
         $grid = new GeneralGrid();
+        static::setProperties($grid, $properties);
         return $grid;
     }
 

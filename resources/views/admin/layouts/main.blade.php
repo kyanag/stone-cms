@@ -34,10 +34,10 @@
     </div>
     <ul class="navbar-nav ml-md-auto">
         <li class="nav-item dropdown">
-            <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown" aria-expanded="false">
                 {{ \Illuminate\Support\Facades\Auth::guard("admin")->user()->nickname }}
             </a>
-            <div class="dropdown-menu dropdown-menu-md-right">
+            <div class="dropdown-menu dropdown-menu-right text-black-50">
                 <a class="dropdown-item stone-clickajax" data-method="POST" data-url="{{ route("admin.logout") }}" data-confirm="确认退出？">退出</a>
             </div>
         </li>
@@ -51,21 +51,21 @@
         <div id="sidenav">
             <ul class="nav flex-column">
                 @foreach(\App\Models\Admin\AdminMenu::tree() as $item)
-                <li class="nav-item hover">
-                    @if(count($item['_children']) > 0)
-                        <div class="nav-link hover dropdown-toggle" href="{{ @$item['path'] }}">{{ $item['title'] }}</div>
+                <li class="nav-item">
+                    @if(count($item['_children']) == 0)
+                        <a class="nav-link" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
                     @else
-                        <div class="nav-link">
+                        <div class="nav-link" data-toggle="collapse" data-target="#sidenav-node-{{ $item['id'] }}" aria-expanded="false" aria-controls="sidenav-node-{{ $item['id'] }}">
                             <a href="{{ @$item['path'] }}" class="pr-1">{{ $item['title'] }}</a>
-                            <div class="float-right px-2 hover-show hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
+                            <div class="float-right px-2 hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
                         </div>
                     @endif
 
                     @if(count($item['_children']))
-                    <ul class="nav flex-column">
+                    <ul class="nav flex-column collapse" id="sidenav-node-{{ $item['id'] }}">
                         @foreach($item['_children'] as $item)
                         <li class="nav-item">
-                            <a class="active" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
+                            <a class="nav-link" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
                         </li>
                         @endforeach
                     </ul>

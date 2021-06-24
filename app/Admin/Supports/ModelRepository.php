@@ -18,6 +18,11 @@ class ModelRepository implements Repository
     }
 
 
+    public function query(){
+        return $this->model::query();
+    }
+
+
     public function find($id){
         return $this->model::query()->find($id);
     }
@@ -27,7 +32,8 @@ class ModelRepository implements Repository
         return $model->fill($attributes);
     }
 
-    public function index($keyword = "", $where = []){
-
+    public function paginator(){
+        $args = func_get_args();
+        return $this->query()->paginate(...$args);
     }
 }

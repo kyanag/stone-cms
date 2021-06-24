@@ -12,8 +12,6 @@ Route::middleware("auth:admin")->group(function(){
 
 if(env("APP_DEBUG", false)){
     Route::get("/temp", function(){
-        return \Illuminate\Support\Facades\Cache::tags("admin")->remember("admin1", 1, function(){
-            return time();
-        });
+        var_dump(\App\Models\Admin\AdminMenu::tree());
     });
 }

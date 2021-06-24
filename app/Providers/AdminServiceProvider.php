@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Admin\Supports\Tree;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Kyanag\Form\Core\Factory;
@@ -41,6 +43,16 @@ class AdminServiceProvider extends ServiceProvider
 
         Collection::macro("toTreeList", function($name, $p_name, $p_id = 0){
             return (new Tree($this->items))->toTreeList(collect(), $name, $p_name, $p_id, 0);
+        });
+
+        UrlGenerator::macro("withQuery", function($url, $parameters = []){
+            [$path, $qs] = $this->extractQueryString($url);
+
+            if($qs == ""){
+                $qs = "?";
+            }
+            $qs = $qs . http_build_query($parameters);
+            return "{$path}{$qs}";
         });
     }
 }

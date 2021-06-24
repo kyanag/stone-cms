@@ -12,31 +12,36 @@ class GeneralGrid implements Widget
 
     public $columns;
 
-    protected $items = [];
-
     protected $links = [];
 
     /** @var Widget */
     protected $advancedSearch;
 
+    /**
+     * @var Paginator
+     */
     protected $paginator;
 
-    /**
-     * @param $items
-     * @param Paginator|null $paginator
-     */
-    public function withItems($items, $paginator = null){
-        $this->items = $items;
+
+    public function withPaginator($paginator){
         $this->paginator = $paginator;
         return $this;
     }
 
-    public function withLink($link){
+    public function getPaginator(){
+        return $this->paginator;
+    }
+
+    public function getItems(){
+        return $this->paginator->items();
+    }
+
+    public function appendLink($link){
         $this->links[] = $link;
         return $this;
     }
 
-    public function coverLinks($links){
+    public function withLinks($links){
         $this->links = $links;
     }
 
@@ -55,4 +60,18 @@ class GeneralGrid implements Widget
         ]);
     }
 
+
+    public function linkGroups(){
+        return collect($this->links)->sortBy(function($link){
+            return @$link['index'];
+        })->groupBy(function($link){
+            return @$link['group'];
+        });
+    }
+
+    public function columnsForSort(){
+        return collect($this->columns)->filter(function($column){
+            return @$column['sortable'];
+        });
+    }
 }

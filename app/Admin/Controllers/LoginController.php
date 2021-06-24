@@ -58,7 +58,7 @@ class LoginController extends Controller
 
     public function logout(){
         //Auth::guard("admin")->logout();
-        throw new \Exception("保存失败!");
+        throw new \Exception("退出失败!");
         return redirect(route("admin.login"));
     }
 }

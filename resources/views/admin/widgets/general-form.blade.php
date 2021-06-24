@@ -10,6 +10,7 @@
     'method' => in_array(strtoupper($form->method), ['GET', 'POST']) ? $form->method : "POST",
 ]) !!}>
     <?=csrf_field()?>
+    <?=method_field($form->method)?>
     @foreach($form->fields as $field)
         {!! app("renderer")->render($field) !!}
     @endforeach

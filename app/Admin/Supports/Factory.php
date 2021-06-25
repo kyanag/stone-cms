@@ -6,6 +6,7 @@ namespace App\Admin\Supports;
 
 use App\Admin\Widgets\Forms\GeneralForm;
 use App\Admin\Widgets\Grids\GeneralGrid;
+use Illuminate\Http\Request;
 use Kyanag\Form\Core\ArrayElement;
 use Kyanag\Form\Interfaces\Element;
 
@@ -50,6 +51,12 @@ class Factory
     public static function makeViewGrid($properties = []){
         $grid = new GeneralGrid();
         static::setProperties($grid, $properties);
+
+        $grid->onBehaviour("search", function(Request $request){
+            return function($query){
+                return $query;
+            };
+        });
         return $grid;
     }
 

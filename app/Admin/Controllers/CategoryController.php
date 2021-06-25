@@ -8,20 +8,21 @@ use App\Admin\Supports\Factory;
 use App\Admin\Supports\ModelRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\AdminMenu;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class AdminMenuController extends Controller
+class CategoryController extends Controller
 {
 
     use QuickControllerTrait;
 
 
-    public $name = "菜单";
+    public $name = "前台栏目";
 
 
     public function getForm()
     {
-        return Factory::instance("admin-menu.form", function(){
+        return Factory::instance("category.form", function(){
             $parent_options = AdminMenu::options();
             return Factory::makeViewForm([
                 'fields' => [
@@ -73,7 +74,7 @@ class AdminMenuController extends Controller
 
     public function getGrid()
     {
-        return Factory::instance("admin-menu.grid", function(){
+        return Factory::instance("category.grid", function(){
             $grid = Factory::makeViewGrid([
                 'columns' => [
                     [
@@ -135,8 +136,8 @@ class AdminMenuController extends Controller
 
     public function getRepository()
     {
-        return Factory::instance("admin-menu.repository", function(){
-            return new ModelRepository(new AdminMenu());
+        return Factory::instance("category.repository", function(){
+            return new ModelRepository(new Category());
         });
     }
 

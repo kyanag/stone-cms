@@ -8,6 +8,8 @@ Route::middleware("auth:admin")->group(function(){
     \Illuminate\Support\Facades\Route::get("home", "HomeController@home")->name("admin.home");
 
     \Illuminate\Support\Facades\Route::resource("menu", "AdminMenuController")->names("admin.menu");
+
+    \Illuminate\Support\Facades\Route::resource("category", "CategoryController")->names("admin.category");
 });
 
 if(env("APP_DEBUG", false)){

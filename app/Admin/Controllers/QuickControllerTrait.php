@@ -5,11 +5,13 @@ namespace App\Admin\Controllers;
 
 
 use App\Admin\Interfaces\Repository;
+use App\Admin\Supports\ModelRepository;
 use App\Admin\Widgets\Forms\GeneralForm;
 use App\Admin\Widgets\Grids\GeneralGrid;
 use App\Admin\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -19,7 +21,7 @@ trait QuickControllerTrait
     /**
      * @return Widget
      */
-    abstract public function getForm();
+    abstract public function getForm(Model $model = null);
 
     /**
      * @return Widget|GeneralGrid
@@ -27,7 +29,7 @@ trait QuickControllerTrait
     abstract public function getGrid();
 
     /**
-     * @return Repository
+     * @return Repository|ModelRepository
      */
     abstract public function getRepository();
 
@@ -39,13 +41,15 @@ trait QuickControllerTrait
     public function index(Request $request)
     {
         $grid = $this->getGrid();
+        /** @var Paginator $paginator */
+        $paginator = $this->getRepository()
+            ->query()
+            ->when($grid->hasBehaviour("search"), function($query) use($grid, $request){
+                return $query->where($grid->triggerBehaviour("search", $request));
+            })
+            ->paginate();
 
-        $grid->appendLink([
-            'url' => action([static::class, "create"]),
-            'title' => "新增",
-            'type' => "primary",
-        ]);
-        $grid->withPaginator($this->getRepository()->paginator(10));
+        $grid->withPaginator($paginator);
 
         return view("admin::common.index", [
             'grid' => $grid,
@@ -76,8 +80,9 @@ trait QuickControllerTrait
      */
     public function store(Request $request)
     {
-        $form = $this->getForm($request);
-        $attributes = $form->extract($request);
+        $form = $this->getForm();
+
+        $attributes = $form->triggerBehaviour("submit", $request);
 
         /** @var Model $model */
         $model = $this->getRepository()->newModel($attributes);
@@ -119,6 +124,7 @@ trait QuickControllerTrait
         $form->setValue($model->toArray());
 
         return view("admin::common.create", [
+            'controller' => $this,
             'form' => $form,
             'title' => "修改{$this->name} - [{$model['title']}]",
         ]);
@@ -140,7 +146,7 @@ trait QuickControllerTrait
         }
         /** @var GeneralForm $form */
         $form = $this->getForm();
-        $attributes = $form->extract($request);
+        $attributes = $form->triggerBehaviour("submit", $request);
 
         $model->fill($attributes);
         if($model->saveOrFail()){

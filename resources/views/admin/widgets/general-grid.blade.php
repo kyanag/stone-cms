@@ -6,7 +6,21 @@
         @foreach($grid->linkGroups() as $name => $links)
         <div class="btn-group mb-2 mr-2" role="group" aria-label="tool-group-{{ $name ?: "main" }}">
             @foreach($links as $index => $link)
-            <a type="button" class="btn btn-{{ $link['type'] }}" href="{{ $link['url'] }}">{{ $link['title'] }}</a>
+                @if(!isset($link['children']))
+                <a type="button" class="btn btn-{{ $link['type'] }}" href="{{ $link['url'] }}">{{ $link['title'] }}</a>
+                @else
+                <div class="btn-group">
+                    <a type="button" class="btn btn-{{ $link['type'] }}" href="{{ $link['url'] }}">{{ $link['title'] }}</a>
+                    <button type="button" class="btn btn-primary dropdown-toggle active" data-toggle="dropdown" data-target="#toolbar-left-{{ $name }}-{{ $index }}" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="toolbar-left-{{ $name }}-{{ $index }}">
+                        @foreach($link['children'] as $child_link)
+                            <a class="dropdown-item" href="{{ $child_link['url'] }}">{{ $child_link['title'] }}</a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             @endforeach
         </div>
         @endforeach
@@ -27,8 +41,8 @@
         </form>
 
         <div class="btn-group pl-2" style="width: 100px" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">排序 </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+            <button id="toolbar-sort" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">排序 </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="toolbar-sort">
                 @foreach($grid->columnsForSort() as $column)
                 <a class="dropdown-item" href="{{ url()->withQuery(null, ['sortBy' => $column['name'], "sortType" => "asc"]) }}">{{ $column['title'] }} 升序</a>
                 <a class="dropdown-item" href="{{ url()->withQuery(null, ['sortBy' => $column['name'], "sortType" => "desc"]) }}">{{ $column['title'] }} 降序</a>

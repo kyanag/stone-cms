@@ -4,16 +4,18 @@
 namespace App\Admin\Widgets\Forms;
 
 
+use App\Admin\Extendeds\BehaviourTrait;
 use App\Admin\Widgets\ElementWidgetTrait;
 use App\Admin\Widgets\Widget;
+use Illuminate\Http\Request;
 use Kyanag\Form\Interfaces\ChooseElement;
 use Kyanag\Form\Interfaces\Element;
 
 class GeneralForm implements Element, Widget
 {
 
+    use BehaviourTrait;
     use ElementWidgetTrait;
-    use ActiveFormTrait;
 
     /**
      * @var array<Element>
@@ -26,6 +28,17 @@ class GeneralForm implements Element, Widget
 
     public $enctype;
 
+
+    public function __construct()
+    {
+        $this->onBehaviour("submit", function(Request $request){
+            $keys = array_map(function($element){
+                return $element->name;
+            }, $this->getFields());
+            return $request->only($keys);
+        });
+    }
+
     public function setValue($values)
     {
         $this->fields = array_map(function(Element $child) use($values){
@@ -33,6 +46,13 @@ class GeneralForm implements Element, Widget
             return $child;
         }, $this->fields);
 
+        return $this;
+    }
+
+    /**
+     * 刷新表单 让selected checked 生效
+     */
+    protected function refresh(){
         //同步值到字段里
         collect($this->fields)->each(function($element){
             /** @var Element|ChooseElement $element */
@@ -49,7 +69,6 @@ class GeneralForm implements Element, Widget
                 });
             }
         });
-        return $this;
     }
 
     public function with($url = null, $method = null, $enctype = null){
@@ -66,6 +85,7 @@ class GeneralForm implements Element, Widget
 
     public function render()
     {
+        $this->refresh();
         return view("admin::widgets.general-form", [
             'form' => $this,
         ]);

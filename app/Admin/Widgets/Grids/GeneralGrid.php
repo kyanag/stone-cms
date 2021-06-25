@@ -4,18 +4,22 @@
 namespace App\Admin\Widgets\Grids;
 
 
+use App\Admin\Extendeds\BehaviourTrait;
+use App\Admin\Widgets\Forms\GeneralForm;
 use App\Admin\Widgets\Widget;
 use Illuminate\Pagination\Paginator;
 
 class GeneralGrid implements Widget
 {
 
+    use BehaviourTrait;
+
     public $columns;
 
     protected $links = [];
 
-    /** @var Widget */
-    protected $advancedSearch;
+    /** @var Widget|GeneralForm */
+    protected $filterForm;
 
     /**
      * @var Paginator
@@ -43,14 +47,16 @@ class GeneralGrid implements Widget
 
     public function withLinks($links){
         $this->links = $links;
+        return $this;
     }
 
     /**
      * 高级搜索表单
      * @param $form
      */
-    public function withAdvancedSearch($form){
-        $this->advancedSearch = $form;
+    public function withFilterForm($form){
+        $this->filterForm = $form;
+        return $this;
     }
 
     public function render()

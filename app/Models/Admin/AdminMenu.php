@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Admin\Supports\Tree;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,12 +22,18 @@ class AdminMenu extends Model
     {
         parent::boot();
         static::saving(function($model){
-            //检测上级菜单是否形成环
+            //TODO 修改后的上级菜单 不能 是修改之前的下级菜单
         });
 
         static::saved(function($model){
             //更新树缓存
         });
+    }
+
+
+    public function scopeForCategory($query, Category $category){
+        return $query;
+            //->where("category_id", $category['id']);
     }
 
     public function getPathAttribute(){

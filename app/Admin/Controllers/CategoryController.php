@@ -23,32 +23,41 @@ class CategoryController extends Controller
     public function getForm()
     {
         return Factory::instance("category.form", function(){
-            $parent_options = AdminMenu::options();
+            $parent_options = Category::options();
             return Factory::makeViewForm([
                 'fields' => [
                     [
                         'type' => "input",
                         'name' => "title",
-                        'label' => "菜单标题",
-                    ],
-                    [
-                        'type' => "input",
-                        'name' => "url",
-                        'label' => "菜单地址",
-                        'help' => "<a>前缀`@url`/`@route`</a>"
+                        'label' => "栏目标题",
                     ],
                     [
                         'type' => "select",
                         'name' => "p_id",
-                        'label' => "上级菜单",
+                        'label' => "上级栏目",
                         'value' => 0,
                         'options' => $parent_options
                     ],
                     [
                         'type' => "input",
-                        'name' => "index",
-                        'label' => "排序",
-                        'value' => 0,
+                        'name' => "keywords",
+                        'label' => "关键字",
+                    ],
+                    [
+                        'type' => "input",
+                        'name' => "description",
+                        'label' => "简介",
+                    ],
+                    [
+                        'type' => "input",
+                        'name' => "bg_img",
+                        'label' => "背景图",
+                        'value' => "",
+                    ],
+                    [
+                        'type' => "input",
+                        'name' => "jump_to",
+                        'label' => "跳转到",
                     ],
                     [
                         'type' => "radio",
@@ -61,7 +70,7 @@ class CategoryController extends Controller
                                 'value' => 0
                             ],
                             [
-                                'title' => "停用",
+                                'title' => "隐藏",
                                 'value' => 1
                             ],
                         ],

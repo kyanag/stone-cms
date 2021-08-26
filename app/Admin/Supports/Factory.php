@@ -15,6 +15,11 @@ class Factory
 
     static protected $instances = [];
 
+
+    public static function makeInspector($properties){
+
+    }
+
     public static function instance($id, $creator){
         if(!isset(static::$instances[$id])){
             static::$instances[$id] = call_user_func($creator);

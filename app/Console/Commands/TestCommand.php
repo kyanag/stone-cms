@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Admin\Supports\Tree;
+use App\Models\Category;
+use App\Models\Content;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
@@ -38,26 +40,23 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        $badItems = [
-            [
-                'id' => 1,
-                'p_id' => 0,
-                'name' => "技术部",
-            ],
-            [
-                'id' => 2,
-                'p_id' => 1,
-                'name' => "B项目组",
-            ],
-            [
-                'id' => 3,
-                'p_id' => 2,
-                'name' => "B项目组 - CTO",
+//        $category = new Category([
+//            'title' => "内容",
+//            'status' => 0,
+//        ]);
+//        if(!$category->saveOrFail()){
+//            throw new \Exception(111);
+//        }
+        $content = Content::query()->first();
+        $content->load([
+            'contentable'
+        ]);
+        var_dump($content->toArray());
 
-            ],
-
-        ];
-        $items = (new Tree($badItems))->toTreeList(collect());
-        var_dump($items);
+        $category = Category::query()->first();
+        $category->load([
+            'content'
+        ]);
+        var_dump($category->toArray());
     }
 }

@@ -34,23 +34,15 @@ trait QuickControllerTrait
     abstract public function getRepository();
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
         $grid = $this->getGrid();
-        /** @var Paginator $paginator */
-        $paginator = $this->getRepository()
-            ->query()
-            ->when($grid->hasBehaviour("search"), function($query) use($grid, $request){
-                return $query->where($grid->triggerBehaviour("search", $request));
-            })
-            ->paginate();
-
+        $attributes = $grid->triggerBehaviour("search", $request);
+        $paginator = $this->getRepository()->paginate("", $attributes);
         $grid->withPaginator($paginator);
-
         return view("admin::common.index", [
             'grid' => $grid,
             'title' => "{$this->name} 列表",
@@ -59,8 +51,8 @@ trait QuickControllerTrait
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function create(Request $request)
     {
@@ -77,6 +69,7 @@ trait QuickControllerTrait
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function store(Request $request)
     {
@@ -84,9 +77,8 @@ trait QuickControllerTrait
 
         $attributes = $form->triggerBehaviour("submit", $request);
 
-        /** @var Model $model */
-        $model = $this->getRepository()->newModel($attributes);
-        if($model->save()){
+        $model = $this->getRepository()->create($attributes);
+        if($model !== false){
             session()->flash("success", "保存成功!");
             return back();
         }else{
@@ -110,7 +102,7 @@ trait QuickControllerTrait
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function edit($id)
     {
@@ -136,10 +128,10 @@ trait QuickControllerTrait
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function update(Request $request, $id)
     {
-        /** @var Model $model */
         $model = $this->getRepository()->find($id);
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
@@ -148,11 +140,10 @@ trait QuickControllerTrait
         $form = $this->getForm();
         $attributes = $form->triggerBehaviour("submit", $request);
 
-        $model->fill($attributes);
-        if($model->saveOrFail()){
-            return back()->with("success", "更新 [{$model['title']}] 成功!");
+        if($this->getRepository()->update($model, $attributes)){
+            return back()->with("success", "更新[{$this->name}] - {$model['title']} 成功!");
         }else{
-            throw new \Exception("更新 [{$model['title']}] 失败!");
+            throw new \Exception("更新[{$this->name}] - {$model['title']} 成功!");
         }
     }
 
@@ -161,15 +152,11 @@ trait QuickControllerTrait
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy($id)
     {
-        /** @var Model $model */
-        $model = $this->getRepository()->find($id);
-        if(is_null($model)){
-            throw new NotFoundHttpException("不存在的内容!");
-        }
-        if($model->delete()){
+        if($this->getRepository()->delete($id)){
             return "删除成功!";
         }else{
             throw new \Exception("删除失败!");

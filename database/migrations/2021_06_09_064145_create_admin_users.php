@@ -22,7 +22,7 @@ class CreateAdminUsers extends Migration
             $table->timestamps();
         });
 
-        $admin_user = new \App\Models\AdminUser([
+        $admin_user = new \App\Models\Admin\AdminUser([
             'username' => "admin",
             'nickname' => "Admin",
             'password' => \Illuminate\Support\Facades\Hash::make("123456"),

@@ -74,6 +74,10 @@ class AdminMenuController extends Controller
     public function getGrid()
     {
         return Factory::instance("admin-menu.grid", function(){
+            $parent_options = AdminMenu::options();
+
+            $map = array_column($parent_options, null, "value");
+
             $grid = Factory::makeViewGrid([
                 'columns' => [
                     [
@@ -92,6 +96,12 @@ class AdminMenuController extends Controller
                     [
                         'name' => "p_id",
                         'title' => "上级菜单",
+                        'cast' => function($index, $model, $value) use($map){
+                            if(isset($map[$value])){
+                                return $map[$value]['title'];
+                            }
+                            return "<span class='color-red'> - </span>";
+                        }
                     ],
                     [
                         'name' => "index",
@@ -101,7 +111,7 @@ class AdminMenuController extends Controller
                         'name' => "status",
                         'title' => "状态",
                         'cast' => function($index, $model, $value){
-                            return $value == 0 ? "生效" : "隐藏";
+                            return $value == 0 ? "<span class='badge badge-success'>生效</span>" : "<span class='badge badge-secondary'>隐藏</span>";
                         }
                     ],
                     [

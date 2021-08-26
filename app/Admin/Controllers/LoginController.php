@@ -43,7 +43,7 @@ class LoginController extends Controller
 
     public function login(Request $request){
         $loginForm = $this->getForm();
-        $attributes = $loginForm->extract($request);
+        $attributes = $loginForm->triggerBehaviour("submit", $request);
 
         $remember_me = @$attributes['remember_me'] == 1;
         unset($attributes['remember_me']);

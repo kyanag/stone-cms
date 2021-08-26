@@ -15,14 +15,14 @@ class CreateCategory extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string("cid")->comment("内容唯一编码");
             $table->string("title")->comment("栏目标题");
             $table->bigInteger("p_id")->comment("上级栏目")->default(0);
-            $table->string("keywords")->comment("关键字");
-            $table->string("description")->comment("简介");
+            $table->string("keywords")->nullable()->comment("关键字");
+            $table->string("description")->nullable()->comment("简介");
             $table->string("bg_img")->nullable()->comment("背景图片");
-            $table->string("dataarea")->nullable()->comment("数据域");
             $table->string("jump_to")->nullable()->comment("跳转地址");
-            $table->tinyInteger("status")->comment("状态 0正常 1不显示");
+            $table->tinyInteger("status")->comment("状态 -1已删除 0正常 1不显示");
             $table->timestamps();
         });
     }

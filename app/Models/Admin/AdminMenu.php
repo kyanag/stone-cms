@@ -18,19 +18,6 @@ class AdminMenu extends Model
     ];
 
 
-    protected static function boot()
-    {
-        parent::boot();
-        static::saving(function($model){
-            //TODO 修改后的上级菜单 不能 是修改之前的下级菜单
-        });
-
-        static::saved(function($model){
-            //更新树缓存
-        });
-    }
-
-
     public function scopeForCategory($query, Category $category){
         return $query;
             //->where("category_id", $category['id']);

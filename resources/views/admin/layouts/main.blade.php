@@ -8,10 +8,10 @@
     <meta name="autocomplete" content="off">
     <title>@yield('title', "工作台")</title>
 
-    <link href="https://cdn.staticfile.org/bootswatch/4.5.3/cosmo/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.staticfile.org/font-awesome/5.15.3/css/all.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/bootswatch/4.5.1/cosmo/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/5.14.0/css/all.min.css" rel="stylesheet">
 
-    <link href="https://cdn.staticfile.org/jasny-bootstrap/4.0.0/css/jasny-bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.staticfile.org/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
     <link href="{{ asset("/storage/css/style.css") }}" rel="stylesheet">

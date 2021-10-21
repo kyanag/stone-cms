@@ -16,6 +16,8 @@ Route::middleware("auth:admin")->group(function(){
     \Illuminate\Support\Facades\Route::resource("user", "AdminUserController")->names("admin.user");
 
     \Illuminate\Support\Facades\Route::resource("category", "CategoryController")->names("admin.category");
+
+    \Illuminate\Support\Facades\Route::resource("article", "ArticleController")->names("admin.article");
 });
 
 if(env("APP_DEBUG", false)){

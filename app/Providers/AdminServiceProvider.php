@@ -23,6 +23,7 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->app->singleton("renderer", function(){
             $p = Factory::createEngine();
+            $p->addFolder("custom", resource_path("templates"));
             return new Renderer($p);
         });
         require_once app_path("Admin/functions.php");
@@ -37,7 +38,7 @@ class AdminServiceProvider extends ServiceProvider
     {
         /** @var Renderer $renderer */
         $renderer = $this->app->get("renderer");
-        $renderer->setCast("form", "stone::form");
+        $renderer->setCast("form", "custom::form");
 
         View::addNamespace("admin", resource_path("views/admin"));
 

@@ -17,12 +17,6 @@ class AdminMenu extends Model
         'path'
     ];
 
-
-    public function scopeForCategory($query, Category $category){
-        return $query;
-            //->where("category_id", $category['id']);
-    }
-
     public function getPathAttribute(){
         if(substr($this->url, 0, 1) == "@"){
             $resource_path = $this->url;
@@ -38,7 +32,6 @@ class AdminMenu extends Model
         }
         return $this->url;
     }
-
 
     public static function options(){
         $items = AdminMenu::query()->get()->toArray();

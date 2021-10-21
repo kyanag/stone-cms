@@ -1,4 +1,16 @@
-(function($, window, document){
+require.config({
+    baseUrl: '/storage/js/', // 默认为index.html所在的目录
+    paths: {
+        jquery: [
+            'https://cdn.staticfile.org/jquery/3.6.0/jquery.min'
+        ],
+        bootstrap4: [
+            "https://cdn.staticfile.org/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min"
+        ],
+        'jasny-bootstrap': "https://cdn.staticfile.org/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min",
+    }
+});
+require(["jquery", 'bootstrap4', 'jasny-bootstrap'], function($){
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -51,5 +63,4 @@
             return Promise.resolve(bool);
         },
     });
-})(jQuery,window,document);
-
+});

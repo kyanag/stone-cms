@@ -5,10 +5,7 @@ namespace App\Admin\Controllers;
 
 
 use App\Admin\Interfaces\Repository;
-use App\Admin\Supports\ModelRepository;
-use App\Admin\Widgets\Forms\GeneralForm;
-use App\Admin\Widgets\Grids\GeneralGrid;
-use App\Admin\Widgets\Widget;
+use App\Admin\Models\ViewModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -19,19 +16,9 @@ trait QuickControllerTrait
 {
 
     /**
-     * @return Widget
+     * @return ViewModel
      */
-    abstract public function getForm(Model $model = null);
-
-    /**
-     * @return Widget|GeneralGrid
-     */
-    abstract public function getGrid();
-
-    /**
-     * @return Repository|ModelRepository
-     */
-    abstract public function getRepository();
+    abstract protected function getViewModel($id = null);
 
     /**
      * @param Request $request
@@ -39,13 +26,22 @@ trait QuickControllerTrait
      */
     public function index(Request $request)
     {
-        $grid = $this->getGrid();
-        $attributes = $grid->triggerBehaviour("search", $request);
-        $paginator = $this->getRepository()->paginate("", $attributes);
-        $grid->withPaginator($paginator);
+        $viewModel = $this->getViewModel();
+        $viewModel->fillForFilter($request->input() ?: []);
+
+        $grid = $viewModel->toGrid();
+        $grid->withLinks([
+            [
+                'url' => action([static::class, "create"]),
+                'title' => "新增",
+                'type' => "primary",
+            ]
+        ]);
+
         return view("admin::common.index", [
             'grid' => $grid,
-            'title' => "{$this->name} 列表",
+            'title' => $viewModel->showTitle(),
+            'description' => $viewModel->showDescription(),
         ]);
     }
 
@@ -56,11 +52,16 @@ trait QuickControllerTrait
      */
     public function create(Request $request)
     {
+        $viewModel = $this->getViewModel();
+        $viewModel->fillForCreate($request->input() ?: []);
         $url = action([static::class, "store"]);
-        $form = $this->getForm()->with($url, "POST");
+
+        $form = $viewModel->toForm()->with($url, "POST");
+
         return view("admin::common.create", [
             'form' => $form,
-            'title' => "新增 - {$this->name}",
+            'title' => $viewModel->showTitle(),
+            'description' => $viewModel->showDescription(),
         ]);
     }
 
@@ -104,21 +105,20 @@ trait QuickControllerTrait
      * @param  int  $id
      * @return \Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        /** @var Model $model */
-        $model = $this->getRepository()->find($id);
-        if(is_null($model)){
+        /** @var ViewModel $viewModel */
+        $viewModel = $this->getViewModel($id);
+        if(is_null($viewModel)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        /** @var GeneralForm $form */
-        $form = $this->getForm()->with(action([static::class, "update"], [$id]), "PUT");
-        $form->setValue($model->toArray());
+        $form = $viewModel->toForm()
+            ->with(action([static::class, "update"], [$id]), "PUT");
 
         return view("admin::common.create", [
-            'controller' => $this,
             'form' => $form,
-            'title' => "修改{$this->name} - [{$model['title']}]",
+            'title' => $viewModel->showTitle(),
+            'description' => $viewModel->showDescription(),
         ]);
     }
 

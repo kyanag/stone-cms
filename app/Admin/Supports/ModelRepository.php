@@ -18,6 +18,11 @@ class ModelRepository implements Repository
         $this->model = $model;
     }
 
+    public function newModel(){
+        $modelClass = get_class($this->model);
+        /** @var Model $model */
+        return new $modelClass();
+    }
 
     public function query(){
         return $this->model::query();
@@ -27,19 +32,12 @@ class ModelRepository implements Repository
         return $this->query()->where($params)->get();
     }
 
+    /**
+     * @param $id
+     * @return Model | null
+     */
     public function find($id){
         return $this->model::query()->find($id);
-    }
-
-    /**
-     * @param $attributes
-     * @return false|Model
-     */
-    public function create($attributes){
-        $modelClass = get_class($this->model);
-        /** @var Model $model */
-        $model = new $modelClass($attributes);
-        return $model->save();
     }
 
     /**

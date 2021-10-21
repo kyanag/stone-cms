@@ -15,7 +15,6 @@
     <link href="https://cdn.staticfile.org/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
     <link href="{{ asset("/storage/css/style.css") }}" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body class="bg-light">
 <header class="navbar navbar-expand bg-darkblue fixed-top">
@@ -89,7 +88,5 @@
 </main>
 
 </body>
-<script src="{{ asset("/storage/js/main.js") }}"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.staticfile.org/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"></script>
+<script data-main="/storage/js/admin" src="{{ asset("/storage/js/require.js") }}"></script>
 </html>

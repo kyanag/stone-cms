@@ -16,7 +16,9 @@ class AdminUser extends Authenticatable
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = [
+        "password"
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -44,13 +46,5 @@ class AdminUser extends Authenticatable
     public function getRememberTokenName()
     {
         return null;
-    }
-
-    public function setPasswordAttribute($value){
-        if($value !== ""){
-            //pass
-        }else{
-            $this->attributes['password'] = $value;
-        }
     }
 }

@@ -1,12 +1,12 @@
 <?php
-/** @var \App\Admin\Widgets\Grid $grid */
+/** @var \App\Admin\Widgets\Grid $widget */
 
 /** @var \Illuminate\Pagination\Paginator $paginator */
-$paginator = $grid->getPaginator();
+$paginator = $widget->getPaginator();
 ?>
 <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="操作栏">
     <div class="btn-toolbar-left">
-        <?php foreach($grid->getLinkGroups() as $name => $links): ?>
+        <?php foreach($widget->getLinkGroups() as $name => $links): ?>
             <div class="btn-group mb-2 mr-2" role="group" aria-label="tool-group-<?php echo e($name ?: "main"); ?>">
                 <?php foreach($links as $index => $link): ?>
                     <?php if(!isset($link['children'])): ?>
@@ -47,38 +47,39 @@ $paginator = $grid->getPaginator();
         <div class="btn-group pl-2" style="width: 100px" role="group">
             <button id="toolbar-sort" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">排序 </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="toolbar-sort">
-                <?php foreach($grid->getColumns() as $column): if(@$column['sortable'])?>
-                    <a class="dropdown-item" href="<?php echo e(url()->withQuery(null, ['sort' => "{$column['name']}@asc"])); ?>"><?=e($column['title'])?> 升序</a>
-                    <a class="dropdown-item" href="<?php echo e(url()->withQuery(null, ['sort' => "{$column['name']}@desc"])); ?>"><?=e($column['title'])?> 降序</a>
+                <?php foreach($widget->getColumns() as $column): if($column->isSortable())?>
+                    <a class="dropdown-item" href="<?php echo e(url()->withQuery(null, ['sort' => "{$column->getName()}@asc"])); ?>"><?=e($column->getTitle())?> 升序</a>
+                    <a class="dropdown-item" href="<?php echo e(url()->withQuery(null, ['sort' => "{$column->getName()}@desc"])); ?>"><?=e($column->getTitle())?> 降序</a>
                 <?php endforeach;?>
             </div>
         </div>
     </div>
 </div>
 <div class="row collapse" id="advanced-search-toggle">
-    111
+    <?= app("renderer")->render($widget->toForm()) ?>
 </div>
 <table class="table">
     <thead>
     <tr>
-        <?php foreach($grid->getColumns() as $column): ?>
-            <th class="<?=e(@$column['headerClasses'])?>"><?=e($column['title'])?></th>
+        <?php
+        /** @var \App\Admin\Widgets\Column $column */
+        foreach($widget->getColumns() as $column): ?>
+            <th class="<?=$column->getHeaderClass()?>" style="<?=$column->getHeaderStyle() ?>"><?=$column->getTitle()?></th>
         <?php endforeach; ?>
     </tr>
     </thead>
     <tbody>
-    <?php foreach($paginator->getCollection() as $index => $item): ?>
-        <tr>
-            <?php foreach($grid->getColumns() as $column): ?>
-                <th class="<?=e(@$column['rowClasses']); ?>">
-                    <?=call_user_func_array($column['cast'], [$index, $item, @$item[$column['name']]])?>
+    <?php $i = 0;foreach($paginator->getCollection() as $key => $item): ?>
+        <tr class="<?= $column->getRowClass($key, $item, $i)?>" style="<?= $column->getRowStyle($key, $item, $i)?>">
+            <?php foreach($widget->getColumns() as $column): ?>
+                <th class="<?= $column->getCellClass($key, $item, $i)?>" style="<?=$column->getCellStyle($key, $item, $i); ?>">
+                    <?=call_user_func_array($column, [$key, $item, $i])?>
                 </th>
             <?php endforeach; ?>
         </tr>
-    <?php endforeach; ?>
+    <?php $i++;endforeach;unset($i); ?>
     </tbody>
 </table>
 <nav aria-label="Page navigation example" class="float-right">
     <?=$paginator->appends([])->render(); ?>
-
 </nav>

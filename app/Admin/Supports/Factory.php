@@ -4,10 +4,10 @@
 namespace App\Admin\Supports;
 
 
+use App\Admin\Widgets\Column;
 use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
-use App\Admin\Widgets\Grids\GeneralGrid;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 use Kyanag\Form\Core\Widget;
 use function Kyanag\Form\createWidget;
 
@@ -16,38 +16,28 @@ class Factory
 
     static protected $instances = [];
 
-    public static function instance($id, $creator){
-        if(!isset(static::$instances[$id])){
-            static::$instances[$id] = call_user_func($creator);
-        }
-        return static::$instances[$id];
+    /**
+     * @param $fields
+     * @param $viewModel
+     * @return Form
+     */
+    public static function buildForm($fields, Model $model){
+        $elements = array_map(function($props) use($model){
+            $props['value'] = $model->getAttribute($props['name']) ?: @$props['value'];
+            return createWidget($props);
+        }, $fields);
+        return new Form("custom::form", [], $elements);
     }
 
-    public static function createWidget($props){
-        return createWidget($props);
+    /**
+     * @param $columns
+     * @param $viewModel
+     * @return Grid
+     */
+    public static function buildGrid($columns){
+        $columns = array_map(function($item){
+            return new Column("column", $item);
+        }, $columns);
+        return new Grid("custom::grid", [], $columns);
     }
-
-    public static function createElement($name, array $properties = [], $children = []){
-        return new Widget($name, $properties, $children);
-    }
-
-
-    public static function createFormElement($name, array $properties = [], $children = []){
-        return new Form($name, $properties, $children);
-    }
-
-    public static function createGrid($name, $properties = [], $children = []){
-        return new Grid("grid", $properties, $children);
-    }
-
-    public static function createColumn($column){
-
-    }
-
-    protected static function setProperties($object, $properties = []){
-        foreach ($properties as $name => $value){
-            $object->{$name} = $value;
-        }
-    }
-
 }

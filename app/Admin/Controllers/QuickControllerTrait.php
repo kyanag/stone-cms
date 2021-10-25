@@ -29,7 +29,7 @@ trait QuickControllerTrait
         $viewModel = $this->getViewModel();
         $viewModel->fillForFilter($request->input() ?: []);
 
-        $grid = $viewModel->toGrid();
+        $grid = $viewModel->toGrid()->withViewModel($viewModel);
         $grid->withLinks([
             [
                 'url' => action([static::class, "create"]),

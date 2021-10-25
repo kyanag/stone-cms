@@ -9,7 +9,7 @@
     {{--    <h2>Section title</h2>--}}
     <div class="container-fluid">
         {!!
-            $grid->render()
+            app("renderer")->render($grid)
         !!}
     </div>
 @endsection

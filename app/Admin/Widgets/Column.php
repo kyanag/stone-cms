@@ -14,7 +14,6 @@ class Column extends Widget
         return boolval(@$this->attributes['sortable']);
     }
 
-
     public function getTitle(){
         return @$this->attributes['title'];
     }
@@ -49,10 +48,32 @@ class Column extends Widget
         return null;
     }
 
-    public function __invoke($key, $item, $index, $value){
+    public function getCellStyle($key, $item, $index){
+        if(isset($this->attributes['cellStyle'])){
+            if(is_callable($this->attributes['cellStyle'])){
+                return call_user_func_array($this->attributes['cellStyle'], [$key, $item, $index]);
+            }else{
+                return $this->attributes['cellStyle'];
+            }
+        }
+        return null;
+    }
+
+    public function getCellClass($key, $item, $index){
+        if(isset($this->attributes['cellClass'])){
+            if(is_callable($this->attributes['cellClass'])){
+                return call_user_func_array($this->attributes['cellClass'], [$key, $item, $index]);
+            }else{
+                return $this->attributes['cellClass'];
+            }
+        }
+        return null;
+    }
+
+    public function __invoke($key, $item, $index){
         if(isset($this->attributes['cast']) && is_callable($this->attributes['cast'])){
             return call_user_func_array($this->attributes['cast'], [
-                $key, $item, $index, $value
+                $key, $item, $index
             ]);
         }
         return @$item[$this->getName()];

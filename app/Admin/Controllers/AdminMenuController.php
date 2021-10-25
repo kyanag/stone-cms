@@ -5,11 +5,7 @@ namespace App\Admin\Controllers;
 
 
 use App\Admin\Models\AdminMenuView;
-use App\Admin\Supports\Factory;
-use App\Admin\Supports\ModelRepository;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\AdminMenu;
-use Illuminate\Http\Request;
 
 class AdminMenuController extends Controller
 {

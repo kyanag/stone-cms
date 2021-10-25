@@ -10,19 +10,15 @@ use Kyanag\Form\Core\Widget;
 class Grid extends Widget
 {
 
-    protected $columns;
-
-
     protected $links = [];
 
     /** @var ViewModel */
     protected $viewModel;
 
 
-    public function __construct($type, $attributes = [], $columns = [])
-    {
-        parent::__construct($type, $attributes, []);
-        $this->columns = $columns;
+    public function withViewModel($viewModel){
+        $this->viewModel = $viewModel;
+        return $this;
     }
 
 
@@ -44,7 +40,7 @@ class Grid extends Widget
     }
 
     public function getColumns(){
-        return $this->columns;
+        return $this->children;
     }
 
     public function appendLink($link){

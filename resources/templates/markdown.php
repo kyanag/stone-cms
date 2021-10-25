@@ -1,9 +1,9 @@
 <?php
-/** @var \App\Supports\Widget $widget */
+/** @var \Kyanag\Form\Core\Widget $widget */
 /** @var \League\Plates\Template\Template $this */
 ?>
 <div class="form-group row">
-    <label class="col-md-2 col-form-label" for="<?=$this->e($widget->id)?>"><?=$this->e($widget->label)?></label>
+    <label class="col-md-2 col-form-label" for="<?=$this->e($widget->getId())?>"><?=$this->e($widget->getLabel())?></label>
     <div class="col-md-10">
         <textarea
             name="<?=$this->e($widget->name)?>"

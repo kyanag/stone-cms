@@ -16,7 +16,6 @@ use Kyanag\Form\Core\Widget;
  */
 trait ViewModel
 {
-    use BehaviourTrait;
 
     protected $pagesize = 10;
 
@@ -40,10 +39,6 @@ trait ViewModel
         $this->fill($attributes);
     }
 
-    public function toGridForm(){
-        return $this->toForm();
-    }
-
     /**
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
@@ -53,14 +48,26 @@ trait ViewModel
 
     /**
      * @return Widget
+     * @throws \Exception
      */
-    abstract public function toForm();
+    public function toForm(){
+        $class = static::class;
+        throw new \Exception("{$class}::toForm not exists!");
+    }
 
     /**
      * @return Widget | Grid
      */
-    abstract public function toGrid();
+    public function toGrid(){
+        $class = static::class;
+        throw new \Exception("{$class}::toGrid not exists!");
+    }
 
+    public function toGridForm(){
+        return $this->toForm();
+    }
 
-    abstract public function toView();
+    public function toView(){
+        return $this->toForm();
+    }
 }

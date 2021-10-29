@@ -17,6 +17,14 @@ class AdminMenu extends Model
         'path'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope("sorted", function($query){
+            return $query->orderBy("index", "desc");
+        });
+    }
+
     public function getPathAttribute(){
         if(substr($this->url, 0, 1) == "@"){
             $resource_path = $this->url;
@@ -33,31 +41,7 @@ class AdminMenu extends Model
         return $this->url;
     }
 
-    public static function options(){
-        $items = AdminMenu::query()->get()->toArray();
-
-        $items = (new Tree($items))->toTreeList(collect(), "id", "p_id", 0);
-        return collect($items)->map(function($item){
-            return [
-                'title' => str_repeat(" - ", $item['_depth']) . $item['title'],
-                'value' => $item['id'],
-            ];
-        })->prepend([
-            'title' => "根",
-            'value' => 0,
-        ])->values()->toArray();
-    }
-
-    public static function tree(){
-        if(env("APP_DEBUG", false)){
-            $items = AdminMenu::query()->get()->toArray();
-            $tree = (new Tree($items))->toTree("id", "p_id", 0);
-            return $tree;
-        }
-        return Cache::tags("admin-menu.index")->remember("admin-menu.tree", 2 * 60, function(){
-            $items = AdminMenu::query()->get()->toArray();
-            $tree = (new Tree($items))->toTree("id", "p_id", 0);
-            return $tree;
-        });
+    public function parent_menu(){
+        return $this->belongsTo(AdminMenu::class, "p_id", "id");
     }
 }

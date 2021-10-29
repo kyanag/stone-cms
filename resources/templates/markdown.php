@@ -6,18 +6,18 @@
     <label class="col-md-2 col-form-label" for="<?=$this->e($widget->getId())?>"><?=$this->e($widget->getLabel())?></label>
     <div class="col-md-10">
         <textarea
-            name="<?=$this->e($widget->name)?>"
-            class="form-control <?=$this->e($widget->class)?>"
+            name="<?=$this->e($widget->getName())?>"
+            class="form-control <?=$this->e($widget->getClass())?>"
             <?=\Kyanag\Form\renderAttributes([
-                'rows' => intval(@$widget->rows ?: 3),
-                'id' => $this->e($widget->id),
-                'readonly' => boolval($widget->readonly),
-                'disabled' => boolval($widget->disabled),
-                'placeholder' => $this->e($widget->placeholder),
-                'style' => $this->e($widget->style)
+                'rows' => intval($widget->getRows() ?: 3),
+                'id' => $this->e($widget->getId()),
+                'readonly' => boolval($widget->isReadonly()),
+                'disabled' => boolval($widget->isDisabled()),
+                'placeholder' => $this->e($widget->getPlaceholder()),
+                'style' => $this->e($widget->getStyle())
             ])?>
-        ><?=$this->e($widget->value)?></textarea>
-        <div class="invalid-feedback"><?=$this->e($widget->error)?></div>
-        <small class="form-text text-muted"><?=$this->e($widget->help)?></small>
+        ><?=$this->e($widget->getValue())?></textarea>
+        <div class="invalid-feedback"><?=$this->e($widget->getError())?></div>
+        <small class="form-text text-muted"><?=$this->e($widget->getHelp())?></small>
     </div>
 </div>

@@ -17,12 +17,9 @@ class AdminMenuView extends AdminMenu
 
     protected $table = "admin_menus";
 
-    public function showTitle(){
-        return !$this->exists ? "添加后台菜单" : "修改后台菜单 - {$this->title}";
-    }
-
-    public function submit(Request $request){
-
+    public function showTitle()
+    {
+        return "后台菜单";
     }
 
     public function toForm()
@@ -69,15 +66,11 @@ class AdminMenuView extends AdminMenu
                 ],
             ],
         ];
-        return Factory::buildForm($fields, $this);
+        return Factory::buildForm($fields)->withValue($this);
     }
 
     public function toGrid()
     {
-        $parent_options = AdminMenu::options();
-
-        $map = array_column($parent_options, null, "value");
-
         $columns = [
             [
                 'name' => "id",
@@ -95,9 +88,12 @@ class AdminMenuView extends AdminMenu
             [
                 'name' => "p_id",
                 'title' => "上级菜单",
-                'cast' => function($index, $model, $value) use($map){
-                    if(isset($map[$value])){
-                        return $map[$value]['title'];
+                'cast' => function($key, $model, $index){
+                    if($model['p_id'] == 0){
+                        return "<span class='color-red'> 根 </span>";
+                    }
+                    if($model['parent_menu']){
+                        return $model['parent_menu']['title'];
                     }
                     return "<span class='color-red'> - </span>";
                 }
@@ -109,14 +105,15 @@ class AdminMenuView extends AdminMenu
             [
                 'name' => "status",
                 'title' => "状态",
-                'cast' => function($index, $model, $value){
+                'cast' => function($key, $model, $index){
+                    $value = $model['status'];
                     return $value == 0 ? "<span class='badge badge-success'>生效</span>" : "<span class='badge badge-secondary'>隐藏</span>";
                 }
             ],
             [
                 'name' => "actionbar",
                 'title' => "操作",
-                'cast' => function($index, $model, $value){
+                'cast' => function($key, $model, $index){
                     $edit_url = action([AdminMenuController::class, "edit"], [
                         $model['id']
                     ]);
@@ -133,11 +130,14 @@ class AdminMenuView extends AdminMenu
         return Factory::buildGrid($columns);
     }
 
-    public function toView()
+    public function getPaginator()
     {
-        // TODO: Implement toView() method.
+        return static::query()->with([
+            'parent_menu' => function($query){
+                return $query->select("id", "title");
+            }
+        ])->paginate($this->pageSize);
     }
-
 
     public static function options(){
         $items = AdminMenu::query()->get()->toArray();

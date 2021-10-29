@@ -4,7 +4,7 @@
 namespace App\Admin\Models;
 
 
-use App\Admin\Extendeds\BehaviourTrait;
+use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
 use Illuminate\Database\Eloquent\Model;
 use Kyanag\Form\Core\Widget;
@@ -17,14 +17,15 @@ use Kyanag\Form\Core\Widget;
 trait ViewModel
 {
 
-    protected $pagesize = 10;
+    protected $pageSize = 10;
+
 
     public function showTitle(){
-        return $this->exists ? "添加" : "修改";
+        return class_basename(static::class);
     }
 
     public function showDescription(){
-        return null;
+        return $this->_description;
     }
 
     public function fillForFilter($attributes = []){
@@ -43,11 +44,11 @@ trait ViewModel
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getPaginator(){
-        return static::query()->paginate($this->pagesize);
+        return static::query()->paginate($this->pageSize);
     }
 
     /**
-     * @return Widget
+     * @return Form
      * @throws \Exception
      */
     public function toForm(){
@@ -64,10 +65,14 @@ trait ViewModel
     }
 
     public function toGridForm(){
-        return $this->toForm();
+        return $this->toForm()->withAttribute("submitText", "搜索");
     }
 
     public function toView(){
         return $this->toForm();
+    }
+
+    public static function newModel(){
+        return new static();
     }
 }

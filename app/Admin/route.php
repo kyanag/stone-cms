@@ -22,6 +22,6 @@ Route::middleware("auth:admin")->group(function(){
 
 if(env("APP_DEBUG", false)){
     Route::get("/temp", function(){
-        var_dump(\App\Models\Admin\AdminMenu::tree());
+        var_dump(\App\Admin\Models\AdminMenuView::tree());
     });
 }

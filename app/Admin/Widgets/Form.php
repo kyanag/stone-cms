@@ -22,6 +22,11 @@ class Form extends Widget
         return $this;
     }
 
+    public function withValue($value){
+        $this->setValue($value);
+        return $this;
+    }
+
     public function getAction(){
         return $this->action;
     }
@@ -40,5 +45,13 @@ class Form extends Widget
     public function getChildren()
     {
         return $this->children;
+    }
+
+    public function getSubmitText(){
+        return @$this->attributes['submitText'] ?: "提交";
+    }
+
+    public function getResetText(){
+        return @$this->attributes['resetText'] ?: "重置";
     }
 }

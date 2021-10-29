@@ -20,6 +20,13 @@ trait QuickControllerTrait
      */
     abstract protected function getViewModel($id = null);
 
+
+    public function showEditTitle($viewModel){
+        $title = $viewModel->showTitle();
+        return $viewModel->exists ? "修改 {$title}" : "新增 {$title}";
+    }
+
+
     /**
      * @param Request $request
      * @return \Illuminate\View\View
@@ -60,7 +67,7 @@ trait QuickControllerTrait
 
         return view("admin::common.create", [
             'form' => $form,
-            'title' => $viewModel->showTitle(),
+            'title' => $this->showEditTitle($viewModel),
             'description' => $viewModel->showDescription(),
         ]);
     }
@@ -117,7 +124,7 @@ trait QuickControllerTrait
 
         return view("admin::common.create", [
             'form' => $form,
-            'title' => $viewModel->showTitle(),
+            'title' => $this->showEditTitle($viewModel),
             'description' => $viewModel->showDescription(),
         ]);
     }

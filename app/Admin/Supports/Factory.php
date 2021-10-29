@@ -7,26 +7,21 @@ namespace App\Admin\Supports;
 use App\Admin\Widgets\Column;
 use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
-use Illuminate\Database\Eloquent\Model;
-use Kyanag\Form\Core\Widget;
 use function Kyanag\Form\createWidget;
 
 class Factory
 {
-
-    static protected $instances = [];
 
     /**
      * @param $fields
      * @param $viewModel
      * @return Form
      */
-    public static function buildForm($fields, Model $model){
-        $elements = array_map(function($props) use($model){
-            $props['value'] = $model->getAttribute($props['name']) ?: @$props['value'];
+    public static function buildForm($fields, $props = []){
+        $elements = array_map(function($props){
             return createWidget($props);
         }, $fields);
-        return new Form("custom::form", [], $elements);
+        return new Form("custom::form", $props, $elements);
     }
 
     /**
@@ -34,10 +29,10 @@ class Factory
      * @param $viewModel
      * @return Grid
      */
-    public static function buildGrid($columns){
+    public static function buildGrid($columns, $props = []){
         $columns = array_map(function($item){
             return new Column("column", $item);
         }, $columns);
-        return new Grid("custom::grid", [], $columns);
+        return new Grid("custom::grid", $props, $columns);
     }
 }

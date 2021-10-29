@@ -32,7 +32,9 @@ class LoginController extends Controller
                 'label' => "记住我",
                 'value' => 1
             ]
-        ], $this->getViewModel($request));
+        ], $this->getViewModel($request), [
+            'submitText' => "登录"
+        ]);
     }
 
     protected function getViewModel(Request $request){

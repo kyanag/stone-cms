@@ -47,7 +47,7 @@
     <div id="sidebar">
         <div id="sidenav">
             <ul class="nav flex-column">
-                @foreach(\App\Models\Admin\AdminMenu::tree() as $item)
+                @foreach(\App\Admin\Models\AdminMenuView::tree() as $item)
                 <li class="nav-item">
                     @if(count($item['_children']) == 0)
                         <a class="nav-link" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>

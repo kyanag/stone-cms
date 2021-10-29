@@ -4,24 +4,26 @@
 namespace App\Admin\Models;
 
 
-use App\Admin\Controllers\ArticleController;
+use App\Admin\Controllers\CategoryController;
 use App\Admin\Supports\Factory;
-use App\Models\Article;
+use App\Admin\Supports\Tree;
+use App\Models\Category;
 
-class ArticleView extends Article
+class CategoryView extends Category
 {
 
     use ViewModel;
 
-    protected $table = "articles";
+    protected $table = "categories";
 
     public function showTitle()
     {
-        return "文章";
+        return "前台栏目";
     }
 
     public function toForm()
     {
+        $parent_options = static::options();
         $fields = [
             [
                 'type' => "input",
@@ -29,19 +31,32 @@ class ArticleView extends Article
                 'label' => "栏目标题",
             ],
             [
-                'type' => "input",
-                'name' => "excerpt",
-                'label' => "摘要",
+                'type' => "select",
+                'name' => "p_id",
+                'label' => "上级栏目",
+                'value' => 0,
+                'options' => $parent_options
             ],
             [
                 'type' => "input",
-                'name' => "author_id",
-                'label' => "作者",
+                'name' => "keywords",
+                'label' => "关键字",
             ],
             [
-                'type' => "custom::markdown",
-                'name' => "content",
-                'label' => "内容",
+                'type' => "input",
+                'name' => "description",
+                'label' => "简介",
+            ],
+            [
+                'type' => "input",
+                'name' => "bg_img",
+                'label' => "背景图",
+                'value' => "",
+            ],
+            [
+                'type' => "input",
+                'name' => "jump_to",
+                'label' => "跳转到",
             ],
             [
                 'type' => "radio",
@@ -50,11 +65,11 @@ class ArticleView extends Article
                 'value' => 0,
                 'options' => [
                     [
-                        'title' => "正常",
+                        'label' => "正常",
                         'value' => 0
                     ],
                     [
-                        'title' => "隐藏",
+                        'label' => "隐藏",
                         'value' => 1
                     ],
                 ],
@@ -62,6 +77,7 @@ class ArticleView extends Article
         ];
         return Factory::buildForm($fields)->withValue($this);
     }
+
 
     public function toGrid()
     {
@@ -98,10 +114,10 @@ class ArticleView extends Article
                 'name' => "actionbar",
                 'title' => "操作",
                 'cast' => function($index, $model, $value){
-                    $edit_url = action([ArticleController::class, "edit"], [
+                    $edit_url = action([CategoryController::class, "edit"], [
                         $model['id']
                     ]);
-                    $delete_url = action([ArticleController::class, "destroy"], [
+                    $delete_url = action([CategoryController::class, "destroy"], [
                         $model['id']
                     ]);
                     return implode(" ", [
@@ -112,5 +128,20 @@ class ArticleView extends Article
             ],
         ];
         return Factory::buildGrid($columns);
+    }
+
+    public static function options(){
+        $items = static::query()->get()->toArray();
+
+        $items = (new Tree($items))->toTreeList(collect(), "id", "p_id", 0);
+        return collect($items)->map(function($item){
+            return [
+                'label' => str_repeat(" - ", $item['_depth']) . $item['title'],
+                'value' => $item['id'],
+            ];
+        })->prepend([
+            'label' => "根",
+            'value' => 0,
+        ])->values()->toArray();
     }
 }

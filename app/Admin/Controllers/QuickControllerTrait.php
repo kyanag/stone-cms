@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 trait QuickControllerTrait
 {
 
-    /**showEditTitle
+    /**
      * @return ViewModel
      */
     abstract protected function getViewModel($id = null);
@@ -26,19 +26,8 @@ trait QuickControllerTrait
         $viewModel = $this->getViewModel();
         $viewModel->fillForFilter($request->input() ?: []);
 
-        $grid = $viewModel->toGrid()->withViewModel($viewModel);
-        $grid->withLinks([
-            [
-                'url' => action([static::class, "create"]),
-                'title' => "新增",
-                'type' => "primary",
-            ]
-        ]);
-
         return view("admin::common.index", [
-            'grid' => $grid,
-            'title' => $viewModel->showTitle(),
-            'description' => $viewModel->showDescription(),
+            'model' => $viewModel,
         ]);
     }
 
@@ -50,7 +39,7 @@ trait QuickControllerTrait
     public function create(Request $request)
     {
         $viewModel = $this->getViewModel();
-        $viewModel->fillForCreate($request->input() ?: []);
+        $viewModel->fillForForm($request->input() ?: []);
 
         return view("admin::common.create", [
             'model' => $viewModel,
@@ -68,7 +57,7 @@ trait QuickControllerTrait
     {
         /** @var Model|ViewModel $model */
         $model = $this->getViewModel();
-        $model->fillForCreate($request->input());
+        $model->fillForSave($request->input());
 
         if($model->saveOrFail()){
             session()->flash("success", "保存成功!");
@@ -83,7 +72,7 @@ trait QuickControllerTrait
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function show($id)
     {
@@ -127,7 +116,7 @@ trait QuickControllerTrait
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        $model->fillForUpdate($request->input());
+        $model->fillForSave($request->input());
         if($model->saveOrFail()){
             return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
         }else{

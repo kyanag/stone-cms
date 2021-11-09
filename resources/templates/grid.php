@@ -55,9 +55,9 @@ $paginator = $widget->getPaginator();
         </div>
     </div>
 </div>
-<div class="row collapse" id="advanced-search-toggle">
-    <?= app("renderer")->render($widget->toForm()) ?>
-</div>
+<!--<div class="row collapse" id="advanced-search-toggle">-->
+<!--    <?//= app("renderer")->render($widget->toForm()) ?>-->
+<!--</div>-->
 <table class="table">
     <thead>
     <tr>

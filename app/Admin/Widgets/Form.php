@@ -31,25 +31,9 @@ class Form extends Widget
         return $this;
     }
 
-    public function extractValue(Request $request){
-        $attributes = $request->input();
-        $this->setValue($attributes);
-
-        $res = [];
-        if(is_array($this->children)){
-            /**
-             * @var string|integer $index
-             * @var Widget $child
-             */
-            foreach ($this->children as $index => $child){
-                $name = $child->getName();
-                if(is_string($index)){
-                    $name = $index;
-                }
-                $res[$name] = $child->getValue();
-            }
-        }
-        return $res;
+    public function withAttribute($name, $value){
+        $this->attributes[$name] = $value;
+        return $this;
     }
 
     public function getAction(){

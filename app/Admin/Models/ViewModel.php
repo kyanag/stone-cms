@@ -7,6 +7,9 @@ namespace App\Admin\Models;
 use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Kyanag\Form\Core\Widget;
 
 /**
@@ -25,19 +28,37 @@ trait ViewModel
     }
 
     public function showDescription(){
-        return $this->_description;
+        return $this->showTitle();
     }
+
 
     public function fillForFilter($attributes = []){
         $this->fill($attributes);
     }
 
-    public function fillForCreate($attributes = []){
+    public function fillForForm($attributes = []){
         $this->fill($attributes);
     }
 
-    public function fillForUpdate($attributes = []){
+    /**
+     * @param array $attributes
+     * @throws ValidationException
+     */
+    public function fillForSave($attributes = []){
+        $attributes = $this->validate($attributes);
         $this->fill($attributes);
+    }
+
+    /**
+     * @param $attributes
+     * @return array
+     * @throws ValidationException
+     */
+    public function validate($attributes){
+        $keys = array_map(function($child){
+            return $child->getName();
+        }, $this->toForm()->getChildren());
+        return collect($attributes)->only($keys)->toArray();
     }
 
     /**

@@ -100,7 +100,7 @@ class AdminUserView extends AdminUser
                     ]);
                 }
             ],
-        ]);
+        ])->withViewModel($this);
     }
 
 

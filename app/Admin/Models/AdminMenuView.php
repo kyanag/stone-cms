@@ -126,7 +126,7 @@ class AdminMenuView extends AdminMenu
                 }
             ],
         ];
-        return Factory::buildGrid($columns);
+        return Factory::buildGrid($columns)->withViewModel($this);
     }
 
     public function getPaginator()

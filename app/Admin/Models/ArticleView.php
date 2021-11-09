@@ -111,6 +111,6 @@ class ArticleView extends Article
                 }
             ],
         ];
-        return Factory::buildGrid($columns);
+        return Factory::buildGrid($columns)->withViewModel($this);
     }
 }

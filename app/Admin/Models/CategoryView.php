@@ -127,7 +127,7 @@ class CategoryView extends Category
                 }
             ],
         ];
-        return Factory::buildGrid($columns);
+        return Factory::buildGrid($columns)->withViewModel($this);
     }
 
     public static function options(){

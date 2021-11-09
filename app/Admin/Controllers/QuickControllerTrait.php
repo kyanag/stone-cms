@@ -3,28 +3,18 @@
 
 namespace App\Admin\Controllers;
 
-
-use App\Admin\Interfaces\Repository;
 use App\Admin\Models\ViewModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait QuickControllerTrait
 {
 
-    /**
+    /**showEditTitle
      * @return ViewModel
      */
     abstract protected function getViewModel($id = null);
-
-
-    public function showEditTitle($viewModel){
-        $title = $viewModel->showTitle();
-        return $viewModel->exists ? "修改 {$title}" : "新增 {$title}";
-    }
 
 
     /**
@@ -61,14 +51,9 @@ trait QuickControllerTrait
     {
         $viewModel = $this->getViewModel();
         $viewModel->fillForCreate($request->input() ?: []);
-        $url = action([static::class, "store"]);
-
-        $form = $viewModel->toForm()->with($url, "POST");
 
         return view("admin::common.create", [
-            'form' => $form,
-            'title' => $this->showEditTitle($viewModel),
-            'description' => $viewModel->showDescription(),
+            'model' => $viewModel,
         ]);
     }
 
@@ -81,12 +66,11 @@ trait QuickControllerTrait
      */
     public function store(Request $request)
     {
-        $form = $this->getForm();
+        /** @var Model|ViewModel $model */
+        $model = $this->getViewModel();
+        $model->fillForCreate($request->input());
 
-        $attributes = $form->triggerBehaviour("submit", $request);
-
-        $model = $this->getRepository()->create($attributes);
-        if($model !== false){
+        if($model->saveOrFail()){
             session()->flash("success", "保存成功!");
             return back();
         }else{
@@ -103,7 +87,11 @@ trait QuickControllerTrait
      */
     public function show($id)
     {
-        //
+        $model = $this->getViewModel($id);
+
+        return view("admin::common.show", [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -119,13 +107,8 @@ trait QuickControllerTrait
         if(is_null($viewModel)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        $form = $viewModel->toForm()
-            ->with(action([static::class, "update"], [$id]), "PUT");
-
         return view("admin::common.create", [
-            'form' => $form,
-            'title' => $this->showEditTitle($viewModel),
-            'description' => $viewModel->showDescription(),
+            'model' => $viewModel,
         ]);
     }
 
@@ -139,18 +122,17 @@ trait QuickControllerTrait
      */
     public function update(Request $request, $id)
     {
-        $model = $this->getRepository()->find($id);
+        /** @var ViewModel $model */
+        $model = $this->getViewModel($id);
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        /** @var GeneralForm $form */
-        $form = $this->getForm();
-        $attributes = $form->triggerBehaviour("submit", $request);
-
-        if($this->getRepository()->update($model, $attributes)){
-            return back()->with("success", "更新[{$this->name}] - {$model['title']} 成功!");
+        $model->fillForUpdate($request->input());
+        if($model->saveOrFail()){
+            return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
         }else{
-            throw new \Exception("更新[{$this->name}] - {$model['title']} 成功!");
+            return back()->withInput()
+                ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
         }
     }
 
@@ -163,7 +145,12 @@ trait QuickControllerTrait
      */
     public function destroy($id)
     {
-        if($this->getRepository()->delete($id)){
+        /** @var ViewModel|Model $model */
+        $model = $this->getViewModel($id);
+        if(is_null($model)){
+            throw new NotFoundHttpException("找不到的内容!");
+        }
+        if($model->delete()){
             return "删除成功!";
         }else{
             throw new \Exception("删除失败!");

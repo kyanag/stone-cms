@@ -33,7 +33,7 @@ class CreateModels extends Migration
             $table->string("type")->comment("字段类型");
             $table->string("settings")->comment("字段其他自定义属性");
             $table->boolean("is_required")->comment("是否必填");
-            $table->string("rules")->comment("字段规则");
+            $table->string("rules")->default("")->comment("字段规则");
             $table->timestamps();
 
             $table->unique(["name", "model_id"]);

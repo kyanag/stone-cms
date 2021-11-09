@@ -4,10 +4,14 @@
 namespace App\Admin\Widgets;
 
 
+use App\Admin\Extendeds\BehaviourTrait;
+use Illuminate\Http\Request;
 use Kyanag\Form\Core\Widget;
 
 class Form extends Widget
 {
+
+    use BehaviourTrait;
 
     protected $action;
 
@@ -25,6 +29,27 @@ class Form extends Widget
     public function withValue($value){
         $this->setValue($value);
         return $this;
+    }
+
+    public function extractValue(Request $request){
+        $attributes = $request->input();
+        $this->setValue($attributes);
+
+        $res = [];
+        if(is_array($this->children)){
+            /**
+             * @var string|integer $index
+             * @var Widget $child
+             */
+            foreach ($this->children as $index => $child){
+                $name = $child->getName();
+                if(is_string($index)){
+                    $name = $index;
+                }
+                $res[$name] = $child->getValue();
+            }
+        }
+        return $res;
     }
 
     public function getAction(){

@@ -20,6 +20,8 @@ class CreateAdminUsers extends Migration
             $table->string("password")->comment("密码");
             $table->tinyInteger("status")->comment("0正常 1禁用");
             $table->timestamps();
+
+            $table->unique("username", "username-unique");
         });
 
         $admin_user = new \App\Models\Admin\AdminUser([

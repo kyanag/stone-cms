@@ -22,9 +22,7 @@ class ContentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton("inspectorProvider", function($app){
 
-        });
     }
 
     /**
@@ -35,11 +33,6 @@ class ContentServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootCidModels();
-        $this->bootContentInspectors();
-    }
-
-    protected function bootContentInspectors(){
-
     }
 
     protected function bootCidModels(){

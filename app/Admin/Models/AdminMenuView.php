@@ -8,7 +8,6 @@ use App\Admin\Controllers\AdminMenuController;
 use App\Admin\Supports\Factory;
 use App\Admin\Supports\Tree;
 use App\Models\Admin\AdminMenu;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class AdminMenuView extends AdminMenu

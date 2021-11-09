@@ -22,6 +22,12 @@ trait BehaviourTrait
         $this->behaviours[$name] = $callable;
     }
 
+    /**
+     * @param $name
+     * @param mixed ...$args
+     * @return mixed
+     * @throws BehaviourNotFoundException
+     */
     public function triggerBehaviour($name, ...$args){
         if(isset($this->behaviours[$name])){
             return call_user_func_array($this->behaviours[$name], $args);

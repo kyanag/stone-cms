@@ -6,6 +6,7 @@ use App\Admin\Supports\Tree;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Kyanag\Form\Core\Factory;
@@ -54,6 +55,27 @@ class AdminServiceProvider extends ServiceProvider
             }
             $qs = $qs . http_build_query($parameters);
             return "{$path}{$qs}";
+        });
+
+        $this->bootValidatorRules();
+    }
+
+
+    public function bootValidatorRules(){
+        Validator::extend("admin_username", function ($attribute, $value, $parameters, $validator) {
+            if(is_null($value)){
+                return true;
+            }
+            //字母开头  字母数字结尾  中间字母,数字,下划线   长度6-20
+            return preg_match("/^[a-zA-Z][a-zA-Z0-9_]{4,18}[a-zA-Z0-9]$/", $value) == 1;
+        });
+
+        Validator::extend("admin_password", function ($attribute, $value, $parameters, $validator) {
+            if(is_null($value)){
+                return true;
+            }
+            //字母开头  字母数字结尾  中间字母,数字,下划线,点   长度6-20
+            return preg_match("/^[a-zA-Z][a-zA-Z0-9_\.]{4,18}[a-zA-Z0-9]$/", $value) == 1;
         });
     }
 }

@@ -17,7 +17,7 @@ class AdminUser extends Authenticatable
      * @var array
      */
     protected $guarded = [
-        "password"
+        //"password"
     ];
 
     /**

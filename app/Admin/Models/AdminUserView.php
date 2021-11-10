@@ -7,6 +7,9 @@ namespace App\Admin\Models;
 use App\Admin\Controllers\AdminUserController;
 use App\Admin\Supports\Factory;
 use App\Models\Admin\AdminUser;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AdminUserView extends AdminUser
 {
@@ -20,10 +23,16 @@ class AdminUserView extends AdminUser
         return "管理员";
     }
 
-
-    public function fillForCreate($attributes = [])
-    {
-
+    public function getRules(){
+        return [
+            'username' => $this->exists ? [
+                "required",
+                Rule::unique("admin_users")->ignore($this->id)
+            ] : "required|unique:admin_users|username",
+            'nickname' => "required|min:6|max:20",
+            'password' => "admin_password",
+            'repassword' => "same:password",
+        ];
     }
 
     public function toForm()
@@ -33,6 +42,7 @@ class AdminUserView extends AdminUser
                 'type' => "input",
                 'name' => "username",
                 'label' => "用户名",
+                'readonly' => $this->exists,
             ],
             [
                 'type' => "input",

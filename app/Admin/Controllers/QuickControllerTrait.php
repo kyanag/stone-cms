@@ -6,6 +6,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Models\ViewModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait QuickControllerTrait
@@ -23,8 +25,9 @@ trait QuickControllerTrait
      */
     public function index(Request $request)
     {
-        $viewModel = $this->getViewModel();
-        $viewModel->fillForFilter($request->input() ?: []);
+        $viewModel = $this->getViewModel()
+            ->withScenario("index")
+            ->withInputs($request->input());
 
         return view("admin::common.index", [
             'model' => $viewModel,
@@ -38,8 +41,9 @@ trait QuickControllerTrait
      */
     public function create(Request $request)
     {
-        $viewModel = $this->getViewModel();
-        $viewModel->fillForForm($request->input() ?: []);
+        $viewModel = $this->getViewModel()
+            ->withScenario("create")
+            ->withInputs($request->input());
 
         return view("admin::common.create", [
             'model' => $viewModel,
@@ -55,11 +59,11 @@ trait QuickControllerTrait
      */
     public function store(Request $request)
     {
-        /** @var Model|ViewModel $model */
-        $model = $this->getViewModel();
-        $model->fillForSave($request->input());
+        $model = $this->getViewModel()
+            ->withScenario("store")
+            ->withInputs($request->input());
 
-        if($model->saveOrFail()){
+        if($model->verified() && $model->persistOrFail()){
             session()->flash("success", "保存成功!");
             return back();
         }else{
@@ -96,6 +100,10 @@ trait QuickControllerTrait
         if(is_null($viewModel)){
             throw new NotFoundHttpException("找不到的内容!");
         }
+
+        $viewModel = $viewModel->withScenario("edit")
+            ->withInputs($request->input());
+
         return view("admin::common.create", [
             'model' => $viewModel,
         ]);
@@ -116,11 +124,21 @@ trait QuickControllerTrait
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        $model->fillForSave($request->input());
-        if($model->saveOrFail()){
-            return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
-        }else{
+        $model = $this->getViewModel($id)
+            ->withScenario("store")
+            ->withInputs($request->input());
+
+        try{
+            if($model->verified() && $model->persistOrFail()){
+                return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
+            }else{
+                return back()->withInput()
+                    ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
+            }
+        }catch (ValidationException $e){
+            var_dump($e->errors());exit();
             return back()->withInput()
+                ->withErrors($e->errors())
                 ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
         }
     }

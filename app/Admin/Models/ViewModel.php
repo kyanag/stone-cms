@@ -9,6 +9,7 @@ use App\Admin\Widgets\Grid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Kyanag\Form\Core\Widget;
 
@@ -22,57 +23,107 @@ trait ViewModel
 
     protected $pageSize = 10;
 
-
-    public function showTitle(){
-        return class_basename(static::class);
-    }
-
-    public function showDescription(){
-        return $this->showTitle();
-    }
-
-
-    public function fillForFilter($attributes = []){
-        $this->fill($attributes);
-    }
-
-    public function fillForForm($attributes = []){
-        $this->fill($attributes);
-    }
-
     /**
-     * @param array $attributes
-     * @throws ValidationException
+     * 待校验的输入数据
+     * @var array
      */
-    public function fillForSave($attributes = []){
-        $attributes = $this->validate($attributes);
-        $this->fill($attributes);
+    protected $inputs = [];
+
+    /**
+     * 场景 用于
+     * @var mixed
+     */
+    protected $scenario = null;
+
+
+    public function withInputs(array $inputs)
+    {
+        $this->inputs = $inputs;
+        return $this;
+    }
+
+    public function withScenario($scenario)
+    {
+        $this->scenario = $scenario;
+        return $this;
     }
 
     /**
-     * @param $attributes
      * @return array
+     */
+    public function getInputs()
+    {
+        return $this->inputs ?: [];
+    }
+
+    protected function fillInputs()
+    {
+        $this->fill($this->inputs);
+        $this->inputs = null;
+    }
+
+    public function getRules()
+    {
+        return [];
+    }
+
+    /**
+     * 数据保存
+     * @return bool
+     */
+    public function persist()
+    {
+        $this->fillInputs();
+        return $this->save();
+    }
+
+    /**
+     * @return bool
+     * @throws \Throwable
+     */
+    public function persistOrFail(){
+        $this->fillInputs();
+        return $this->saveOrFail();
+    }
+
+    /**
+     * @return bool
      * @throws ValidationException
      */
-    public function validate($attributes){
-        $keys = array_map(function($child){
-            return $child->getName();
-        }, $this->toForm()->getChildren());
-        return collect($attributes)->only($keys)->toArray();
+    public function verified()
+    {
+        $validator = Validator::make($this->inputs, $this->getRules());
+        if($validator->fails()){
+            throw new ValidationException($validator);
+        }
+        $this->inputs = $validator->validated();
+        return true;
     }
 
     /**
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getPaginator(){
-        return static::query()->paginate($this->pageSize);
+    public function getPaginator()
+    {
+        return $this->newQuery()->paginate($this->pageSize);
+    }
+
+    public function showTitle()
+    {
+        return class_basename(static::class);
+    }
+
+    public function showDescription()
+    {
+        return $this->showTitle();
     }
 
     /**
      * @return Form
      * @throws \Exception
      */
-    public function toForm(){
+    public function toForm()
+    {
         $class = static::class;
         throw new \Exception("{$class}::toForm not exists!");
     }
@@ -80,20 +131,24 @@ trait ViewModel
     /**
      * @return Widget | Grid
      */
-    public function toGrid(){
+    public function toGrid()
+    {
         $class = static::class;
         throw new \Exception("{$class}::toGrid not exists!");
     }
 
-    public function toGridForm(){
+    public function toGridForm()
+    {
         return $this->toForm()->withAttribute("submitText", "搜索");
     }
 
-    public function toView(){
+    public function toView()
+    {
         return $this->toForm();
     }
 
-    public static function newModel(){
+    public static function newModel()
+    {
         return new static();
     }
 }

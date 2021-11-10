@@ -12,7 +12,8 @@
         "fideloper/proxy": "^4.0",
         "kyanag/form": "dev-master",
         "laravel/framework": "^6.18.35",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "overtrue/laravel-lang": "~2.0"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

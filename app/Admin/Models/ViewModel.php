@@ -4,6 +4,7 @@
 namespace App\Admin\Models;
 
 
+use App\Admin\Models\ModelPlugs\ValidatePlug;
 use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
 use Illuminate\Database\Eloquent\Model;
@@ -20,14 +21,10 @@ use Kyanag\Form\Core\Widget;
  */
 trait ViewModel
 {
+    use ValidatePlug;
+
 
     protected $pageSize = 10;
-
-    /**
-     * 待校验的输入数据
-     * @var array
-     */
-    protected $inputs = [];
 
     /**
      * 场景 用于
@@ -35,37 +32,11 @@ trait ViewModel
      */
     protected $scenario = null;
 
-
-    public function withInputs(array $inputs)
-    {
-        $this->inputs = $inputs;
-        return $this;
-    }
-
-    public function withScenario($scenario)
-    {
+    public function withScenario($scenario){
         $this->scenario = $scenario;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getInputs()
-    {
-        return $this->inputs ?: [];
-    }
-
-    protected function fillInputs()
-    {
-        $this->fill($this->inputs);
-        $this->inputs = null;
-    }
-
-    public function getRules()
-    {
-        return [];
-    }
 
     /**
      * 数据保存
@@ -73,8 +44,7 @@ trait ViewModel
      */
     public function persist()
     {
-        $this->fillInputs();
-        return $this->save();
+        return $this->commit()->save();
     }
 
     /**
@@ -82,22 +52,7 @@ trait ViewModel
      * @throws \Throwable
      */
     public function persistOrFail(){
-        $this->fillInputs();
-        return $this->saveOrFail();
-    }
-
-    /**
-     * @return bool
-     * @throws ValidationException
-     */
-    public function verified()
-    {
-        $validator = Validator::make($this->inputs, $this->getRules());
-        if($validator->fails()){
-            throw new ValidationException($validator);
-        }
-        $this->inputs = $validator->validated();
-        return true;
+        return $this->commit()->saveOrFail();
     }
 
     /**

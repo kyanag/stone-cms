@@ -63,7 +63,7 @@ trait QuickControllerTrait
             ->withScenario("store")
             ->withInputs($request->input());
 
-        if($model->verified() && $model->persistOrFail()){
+        if($model->persistOrFail()){
             session()->flash("success", "保存成功!");
             return back();
         }else{
@@ -129,14 +129,13 @@ trait QuickControllerTrait
             ->withInputs($request->input());
 
         try{
-            if($model->verified() && $model->persistOrFail()){
+            if($model->persistOrFail()){
                 return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
             }else{
                 return back()->withInput()
                     ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
             }
         }catch (ValidationException $e){
-            var_dump($e->errors());exit();
             return back()->withInput()
                 ->withErrors($e->errors())
                 ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");

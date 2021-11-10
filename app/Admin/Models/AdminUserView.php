@@ -7,6 +7,7 @@ namespace App\Admin\Models;
 use App\Admin\Controllers\AdminUserController;
 use App\Admin\Supports\Factory;
 use App\Models\Admin\AdminUser;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -23,11 +24,33 @@ class AdminUserView extends AdminUser
         return "管理员";
     }
 
+    public function withInputs(array $inputs)
+    {
+        if(isset($inputs['password']) && !$inputs['password']){
+            unset($inputs['password']);
+        }
+        if($this->exists){
+            unset($inputs['username']);
+        }
+    }
+
+    public function withInputsByRequest(Request $request){
+        $inputs = $request->only([
+            'username',
+            'nickname',
+            'password',
+            'repassword',
+            'status',
+        ]);
+        $this->withInputs($inputs);
+    }
+
     public function getRules(){
         return [
             'username' => $this->exists ? [
                 "required",
-                Rule::unique("admin_users")->ignore($this->id)
+                Rule::unique("admin_users")->ignore($this->id),
+                "admin_username"
             ] : "required|unique:admin_users|username",
             'nickname' => "required|min:6|max:20",
             'password' => "admin_password",

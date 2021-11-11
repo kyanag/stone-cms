@@ -25,11 +25,11 @@ class FormView extends Form implements ViewModelInterface
         return "表单管理";
     }
 
-//    public function inject(array $inputs)
-//    {
-//        $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
-//        $this->fill($validatedAttributes);
-//    }
+    public function inject(array $inputs)
+    {
+        $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
+        $this->fill($validatedAttributes);
+    }
 
     public function getRules(){
         return [
@@ -95,36 +95,27 @@ class FormView extends Form implements ViewModelInterface
                 'sortable' => 1
             ],
             [
+                'name' => "name",
+                'title' => "表单",
+            ],
+            [
                 'name' => "title",
-                'title' => "菜单标题",
+                'title' => "表单标题",
             ],
             [
-                'name' => "url",
-                'title' => "菜单地址",
+                'name' => "desc",
+                'title' => "简介",
             ],
             [
-                'name' => "p_id",
-                'title' => "上级菜单",
-                'cast' => function($key, $model, $index){
-                    if($model['p_id'] == 0){
-                        return "<span class='color-red'> 根 </span>";
-                    }
-                    if($model['parent_menu']){
-                        return $model['parent_menu']['title'];
-                    }
-                    return "<span class='color-red'> - </span>";
-                }
-            ],
-            [
-                'name' => "index",
-                'title' => "排序",
+                'name' => "count_fields",
+                'title' => "简介",
             ],
             [
                 'name' => "status",
                 'title' => "状态",
                 'cast' => function($key, $model, $index){
                     $value = $model['status'];
-                    return $value == 0 ? "<span class='badge badge-success'>生效</span>" : "<span class='badge badge-secondary'>隐藏</span>";
+                    return $value == 0 ? "<span class='badge badge-success'>启用</span>" : "<span class='badge badge-secondary'>停用</span>";
                 }
             ],
             [
@@ -149,39 +140,6 @@ class FormView extends Form implements ViewModelInterface
 
     public function getPaginator()
     {
-        return static::query()->with([
-            'parent_menu' => function($query){
-                return $query->select("id", "title");
-            }
-        ])->paginate($this->pageSize);
+        return static::query()->paginate();
     }
-
-    public static function options(){
-        $items = AdminMenu::query()->get()->toArray();
-
-        $items = (new Tree($items))->toTreeList(collect(), "id", "p_id", 0);
-        return collect($items)->map(function($item){
-            return [
-                'label' => str_repeat(" - ", $item['_depth']) . $item['title'],
-                'value' => $item['id'],
-            ];
-        })->prepend([
-            'label' => "根",
-            'value' => 0,
-        ])->values()->toArray();
-    }
-
-    public static function tree(){
-        if(env("APP_DEBUG", false)){
-            $items = AdminMenu::query()->get()->toArray();
-            $tree = (new Tree($items))->toTree("id", "p_id", 0);
-            return $tree;
-        }
-        return Cache::tags("admin-menu.index")->remember("admin-menu.tree", 2 * 60, function(){
-            $items = AdminMenu::query()->get()->toArray();
-            $tree = (new Tree($items))->toTree("id", "p_id", 0);
-            return $tree;
-        });
-    }
-
 }

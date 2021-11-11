@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Content;
+use App\Models\Form;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class ContentServiceProvider extends ServiceProvider
@@ -33,6 +35,20 @@ class ContentServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootCidModels();
+        $this->bootContent();
+    }
+
+    public function bootContent(){
+        Form::saved(function(Form $model){
+            $table_name = $model->getTableNameAttribute();
+            Schema::create($table_name, function(){
+
+            });
+        });
+        Form::deleted(function(Form $model){
+            $table_name = $model->getTableNameAttribute();
+            Schema::dropIfExists($table_name);
+        });
     }
 
     protected function bootCidModels(){

@@ -35,7 +35,7 @@
                 {{ \Illuminate\Support\Facades\Auth::guard("admin")->user()->nickname }}
             </a>
             <div class="dropdown-menu dropdown-menu-right text-black-50">
-                <a class="dropdown-item stone-clickajax" data-method="POST" data-url="{{ route("admin.logout") }}" data-confirm="确认退出？">退出</a>
+                <a class="dropdown-item stone-clickajax" href="{{ route("admin.logout") }}" data-method="POST" data-confirm="确认退出？">退出</a>
             </div>
         </li>
     </ul>

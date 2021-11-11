@@ -3,8 +3,8 @@
 
 namespace App\Admin\Models;
 
-
-use App\Admin\Models\ModelPlugs\ValidatePlug;
+use App\Admin\Supports\ActiveForm;
+use App\Admin\Supports\FormBuilder;
 use App\Admin\Widgets\Form;
 use App\Admin\Widgets\Grid;
 use Illuminate\Database\Eloquent\Model;
@@ -21,38 +21,11 @@ use Kyanag\Form\Core\Widget;
  */
 trait ViewModel
 {
-    use ValidatePlug;
 
 
-    protected $pageSize = 10;
-
-    /**
-     * 场景 用于
-     * @var mixed
-     */
-    protected $scenario = null;
-
-    public function withScenario($scenario){
-        $this->scenario = $scenario;
-        return $this;
-    }
-
-
-    /**
-     * 数据保存
-     * @return bool
-     */
-    public function persist()
+    public function inject(array $inputs)
     {
-        return $this->commit()->save();
-    }
-
-    /**
-     * @return bool
-     * @throws \Throwable
-     */
-    public function persistOrFail(){
-        return $this->commit()->saveOrFail();
+        $this->fill($inputs);
     }
 
     /**
@@ -60,7 +33,7 @@ trait ViewModel
      */
     public function getPaginator()
     {
-        return $this->newQuery()->paginate($this->pageSize);
+        return $this->newQuery()->paginate();
     }
 
     public function showTitle()
@@ -73,23 +46,14 @@ trait ViewModel
         return $this->showTitle();
     }
 
-    /**
-     * @return Form
-     * @throws \Exception
-     */
-    public function toForm()
-    {
-        $class = static::class;
-        throw new \Exception("{$class}::toForm not exists!");
-    }
 
-    /**
-     * @return Widget | Grid
-     */
-    public function toGrid()
+    public function createFormBuilder($fields = [])
     {
-        $class = static::class;
-        throw new \Exception("{$class}::toGrid not exists!");
+        $builder = new FormBuilder($this->toArray());
+        foreach ($fields as $field){
+            $builder->add($field);
+        }
+        return $builder;
     }
 
     public function toGridForm()

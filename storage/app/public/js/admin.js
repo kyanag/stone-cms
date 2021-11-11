@@ -14,7 +14,13 @@ require(["jquery", 'bootstrap4', 'jasny-bootstrap'], function($){
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+        },
+        complete: function(xhr, statusText){
+            console.log(xhr.status);
+            if(xhr.status == 302){
+                location.href = xhr.getResponseHeader("Location");
+            }
+        },
     });
 
     $("body").on("click", ".stone-clickajax", function(e){
@@ -29,13 +35,13 @@ require(["jquery", 'bootstrap4', 'jasny-bootstrap'], function($){
                 url: url,
                 method: method,
                 data: {},
-                success: function(){
-                    console.log("success", arguments);
+                success: function(res, status, xhr){
+                    //console.log("success", arguments);
                 },
                 error: function(response){
                     let result = response.responseJSON;
                     $.alert(result.msg);
-                }
+                },
             })
         }
     });

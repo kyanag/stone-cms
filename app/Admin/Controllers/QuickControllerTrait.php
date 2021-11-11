@@ -3,10 +3,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Interfaces\ViewModelInterface;
 use App\Admin\Models\ViewModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -14,9 +17,9 @@ trait QuickControllerTrait
 {
 
     /**
-     * @return ViewModel
+     * @return ViewModelInterface
      */
-    abstract protected function getViewModel($id = null);
+    abstract protected function getModel($id = null);
 
 
     /**
@@ -25,12 +28,10 @@ trait QuickControllerTrait
      */
     public function index(Request $request)
     {
-        $viewModel = $this->getViewModel()
-            ->withScenario("index")
-            ->withInputs($request->input());
+        $model = $this->getModel();
 
         return view("admin::common.index", [
-            'model' => $viewModel,
+            'model' => $model,
         ]);
     }
 
@@ -41,34 +42,29 @@ trait QuickControllerTrait
      */
     public function create(Request $request)
     {
-        $viewModel = $this->getViewModel()
-            ->withScenario("create")
-            ->withInputs($request->input());
+        $model = $this->getModel();
 
         return view("admin::common.create", [
-            'model' => $viewModel,
+            'model' => $model,
         ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     * @throws \Exception
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
-        $model = $this->getViewModel()
-            ->withScenario("store")
-            ->withInputs($request->input());
+        $model = $this->getModel();
 
-        if($model->persistOrFail()){
-            session()->flash("success", "保存成功!");
-            return back();
+        $inputs = $model->toForm()->submit($request->input());
+        $model->inject($inputs);
+
+        if($model->saveOrFail()){
+            return back()->with("success", "保存成功!");
         }else{
-            return back()->withInput()
-                ->withErrors("保存失败!");
+            return back()->withInput()->with("danger", "保存失败!");
         }
     }
 
@@ -80,7 +76,7 @@ trait QuickControllerTrait
      */
     public function show($id)
     {
-        $model = $this->getViewModel($id);
+        $model = $this->getModel($id);
 
         return view("admin::common.show", [
             'model' => $model,
@@ -95,50 +91,38 @@ trait QuickControllerTrait
      */
     public function edit(Request $request, $id)
     {
-        /** @var ViewModel $viewModel */
-        $viewModel = $this->getViewModel($id);
-        if(is_null($viewModel)){
+        $model = $this->getModel($id);
+        if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
 
-        $viewModel = $viewModel->withScenario("edit")
-            ->withInputs($request->input());
-
         return view("admin::common.create", [
-            'model' => $viewModel,
+            'model' => $model,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     * @throws \Exception
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Throwable
      */
     public function update(Request $request, $id)
     {
-        /** @var ViewModel $model */
-        $model = $this->getViewModel($id);
+        $model = $this->getModel($id);
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
-        $model = $this->getViewModel($id)
-            ->withScenario("store")
-            ->withInputs($request->input());
 
-        try{
-            if($model->persistOrFail()){
-                return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
-            }else{
-                return back()->withInput()
-                    ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
-            }
-        }catch (ValidationException $e){
-            return back()->withInput()
-                ->withErrors($e->errors())
-                ->withErrors("更新[{$model->showTitle()}] - {$model['title']} 失败!");
+        $inputs = $model->toForm()->submit($request->input());
+        $model->inject($inputs);
+
+        if($model->saveOrFail()){
+            return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
+        }else{
+            return back()
+                ->withInput()
+                ->with("danger", "更新[{$model->showTitle()}] - {$model['title']} 失败!");
         }
     }
 
@@ -151,15 +135,14 @@ trait QuickControllerTrait
      */
     public function destroy($id)
     {
-        /** @var ViewModel|Model $model */
-        $model = $this->getViewModel($id);
+        $model = $this->getModel($id);
         if(is_null($model)){
             throw new NotFoundHttpException("找不到的内容!");
         }
         if($model->delete()){
-            return "删除成功!";
+            return back()->with("success", "删除成功!");
         }else{
-            throw new \Exception("删除失败!");
+            return back()->with("danger", "删除失败!");
         }
     }
 

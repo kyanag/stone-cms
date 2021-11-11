@@ -34,13 +34,11 @@ class LoginController extends Controller
             ]
         ], $this->getViewModel($request), [
             'submitText' => "登录"
-        ]);
+        ])->withValue($request->old());
     }
 
     protected function getViewModel(Request $request){
-        $model = new AdminUserView();
-        $model->fillForLogin($request->input());
-        return $model;
+        return new AdminUserView();
     }
 
     public function entry(Request $request){
@@ -50,25 +48,22 @@ class LoginController extends Controller
     }
 
     public function login(Request $request){
-        $viewModel = $this->getViewModel($request);
-
-        $attributes = $viewModel->only([
+        $attributes = $request->only([
             'username', "password"
         ]);
-        $remember_me = $viewModel->getAttribute("remember_me") == 1;
+        $remember_me = $request->input("remember_me", 0) == 1;
 
         if(Auth::guard("admin")->attempt($attributes, $remember_me)){
             session()->flash("success", "登录成功!");
             return redirect(route("admin.home"));
         }else{
-            $attributes['remember_me'] = $remember_me;
-            return redirect(route("admin.entry"))->withInput($attributes);
+            return back()->withInput();
         }
     }
 
     public function logout(){
-        //Auth::guard("admin")->logout();
-        throw new \Exception("退出失败!");
-        return redirect(route("admin.login"));
+        return back();
+        Auth::guard("admin")->logout();
+
     }
 }

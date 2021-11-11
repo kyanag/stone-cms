@@ -21,7 +21,7 @@ class Factory
         $elements = array_map(function($props){
             return createWidget($props);
         }, $fields);
-        return new Form("custom::form", $props, $elements);
+        return new ActiveForm("custom::form", $props, $elements);
     }
 
     /**

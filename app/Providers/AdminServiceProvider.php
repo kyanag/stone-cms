@@ -75,7 +75,7 @@ class AdminServiceProvider extends ServiceProvider
                 return true;
             }
             //字母开头  字母数字结尾  中间字母,数字,下划线,点   长度6-20
-            return preg_match("/^[a-zA-Z][a-zA-Z0-9_\.]{4,18}[a-zA-Z0-9]$/", $value) == 1;
+            return preg_match("/^[a-zA-Z0-9][a-zA-Z0-9_\.]{4,18}[a-zA-Z0-9]$/", $value) == 1;
         });
     }
 }

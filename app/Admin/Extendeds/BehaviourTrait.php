@@ -18,7 +18,8 @@ trait BehaviourTrait
     protected $behaviours = [];
 
 
-    public function onBehaviour($name, $callable){
+    public function onBehaviour($name, $callable)
+    {
         $this->behaviours[$name] = $callable;
     }
 
@@ -28,14 +29,16 @@ trait BehaviourTrait
      * @return mixed
      * @throws BehaviourNotFoundException
      */
-    public function triggerBehaviour($name, ...$args){
+    public function triggerBehaviour($name, ...$args)
+    {
         if(isset($this->behaviours[$name])){
             return call_user_func_array($this->behaviours[$name], $args);
         }
         throw new BehaviourNotFoundException($this, $name);
     }
 
-    public function hasBehaviour($name){
+    public function hasBehaviour($name)
+    {
         return isset($this->behaviours[$name]);
     }
 

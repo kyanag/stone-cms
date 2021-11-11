@@ -5,38 +5,37 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\AdminMenuController;
+use App\Admin\Controllers\FormController;
 use App\Admin\Interfaces\ViewModelInterface;
 use App\Admin\Supports\Factory;
 use App\Admin\Supports\Tree;
 use App\Models\Admin\AdminMenu;
-use Illuminate\Http\Request;
+use App\Models\Form;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
-class AdminMenuView extends AdminMenu implements ViewModelInterface
+class FormView extends Form implements ViewModelInterface
 {
     use ViewModel;
 
-    protected $table = "admin_menus";
+    protected $table = "forms";
 
     public function showTitle()
     {
-        return "后台菜单";
+        return "表单管理";
     }
 
-    public function inject(array $inputs)
-    {
-        $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
-        $this->fill($validatedAttributes);
-    }
+//    public function inject(array $inputs)
+//    {
+//        $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
+//        $this->fill($validatedAttributes);
+//    }
 
     public function getRules(){
         return [
+            'name' => $this->exists ? "" : "required|alpha_num",
             'title' => "required|min:2|max:10",
-            'url' => "required|min:4|max:20",
-            'p_id' => "required",
-            'index' => "integer|min:0|max:99",
+            'desc' => "",
             'status' => "required|in:0,1"
         ];
     }
@@ -46,26 +45,25 @@ class AdminMenuView extends AdminMenu implements ViewModelInterface
         $fields = [
             [
                 'type' => "input",
+                'name' => "name",
+                'label' => "表单名称",
+                'readonly' => $this->exists,
+            ],
+            [
+                'type' => "input",
                 'name' => "title",
-                'label' => "菜单标题",
+                'label' => "表单标题",
+            ],
+            [
+                'type' => "textarea",
+                'name' => "desc",
+                'label' => "表单简介",
             ],
             [
                 'type' => "input",
-                'name' => "url",
-                'label' => "菜单地址",
-                'help' => "<a>前缀`@url`/`@route`</a>"
-            ],
-            [
-                'type' => "select",
-                'name' => "p_id",
-                'label' => "上级菜单",
-                'value' => 0,
-                'options' => static::options(),
-            ],
-            [
-                'type' => "input",
-                'name' => "index",
-                'label' => "排序",
+                'name' => "count_fields",
+                'label' => "字段总数",
+                'readonly' => true,
                 'value' => 0,
             ],
             [
@@ -133,10 +131,10 @@ class AdminMenuView extends AdminMenu implements ViewModelInterface
                 'name' => "actionbar",
                 'title' => "操作",
                 'cast' => function($key, $model, $index){
-                    $edit_url = action([AdminMenuController::class, "edit"], [
+                    $edit_url = action([FormController::class, "edit"], [
                         $model['id']
                     ]);
-                    $delete_url = action([AdminMenuController::class, "destroy"], [
+                    $delete_url = action([FormController::class, "destroy"], [
                         $model['id']
                     ]);
                     return implode(" ", [

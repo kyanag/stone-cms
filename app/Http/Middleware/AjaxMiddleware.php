@@ -20,20 +20,8 @@ class AjaxMiddleware
     {
 //        if($request->ajax()){
 //            $response = $next($request);
-//            return $this->formatJson($response);
+//            return $this->transformResponse($response);
 //        }
         return $next($request);
-    }
-
-    public function formatJson($response){
-        $results = [
-            'status' => 200,
-            'data' => $response,
-        ];
-
-        if($response instanceof \Symfony\Component\HttpFoundation\Response){
-            return 1;
-        }
-        return Router::toResponse();
     }
 }

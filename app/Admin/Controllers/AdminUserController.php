@@ -12,7 +12,7 @@ class AdminUserController extends Controller
 
     use QuickControllerTrait;
 
-    protected function getViewModel($id = null)
+    protected function getModel($id = null)
     {
         if($id){
             return AdminUserView::query()->find($id);

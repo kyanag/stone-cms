@@ -5,16 +5,27 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\CategoryController;
+use App\Admin\Interfaces\ViewModelInterface;
 use App\Admin\Supports\Factory;
 use App\Admin\Supports\Tree;
 use App\Models\Category;
 
-class CategoryView extends Category
+class CategoryView extends Category implements ViewModelInterface
 {
 
     use ViewModel;
 
     protected $table = "categories";
+
+    public function getRules(){
+        return [
+            'title' => "required|min:2|max:10",
+            'url' => "required|min:4|max:20",
+            'p_id' => "required",
+            'index' => "integer|min:0|max:99",
+            'status' => "required|in:0,1"
+        ];
+    }
 
     public function showTitle()
     {
@@ -75,7 +86,7 @@ class CategoryView extends Category
                 ],
             ],
         ];
-        return Factory::buildForm($fields)->withValue($this);
+        return $this->createFormBuilder($fields)->getForm();
     }
 
 

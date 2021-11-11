@@ -4,10 +4,10 @@
 namespace App\Admin\Controllers;
 
 
-use App\Admin\Models\AdminMenuView;
+use App\Admin\Models\FormView;
 use App\Http\Controllers\Controller;
 
-class AdminMenuController extends Controller
+class FormController extends Controller
 {
 
     use QuickControllerTrait;
@@ -15,8 +15,8 @@ class AdminMenuController extends Controller
     protected function getModel($id = null)
     {
         if(is_null($id)){
-            return new AdminMenuView();
+            return new FormView();
         }
-        return AdminMenuView::query()->find($id);
+        return FormView::query()->find($id);
     }
 }

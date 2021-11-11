@@ -13,7 +13,7 @@ class CategoryController extends Controller
     use QuickControllerTrait;
 
 
-    protected function getViewModel($id = null)
+    protected function getModel($id = null)
     {
         if($id){
             return CategoryView::query()->find($id);

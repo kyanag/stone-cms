@@ -26,7 +26,8 @@ class AdminUser extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'status',
+        'password',
+        //'status',
     ];
 
     protected static function boot()
@@ -37,6 +38,18 @@ class AdminUser extends Authenticatable
                 $model->password = Hash::make($model->password);
             }
         });
+    }
+
+    public function setUsernameAttribute($username){
+        if(!$this->exists){
+            $this->attributes['username'] = $username;
+        }
+    }
+
+    public function setPasswordAttribute($password){
+        if($password){
+           $this->attributes['password'] = $password;
+        }
     }
 
     public function getTitleAttribute(){

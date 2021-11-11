@@ -4,14 +4,10 @@
 namespace App\Admin\Widgets;
 
 
-use App\Admin\Extendeds\BehaviourTrait;
-use Illuminate\Http\Request;
 use Kyanag\Form\Core\Widget;
 
 class Form extends Widget
 {
-
-    use BehaviourTrait;
 
     protected $action;
 

@@ -5,6 +5,7 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\AdminUserController;
+use App\Admin\Interfaces\ViewModelInterface;
 use App\Admin\Supports\Factory;
 use App\Models\Admin\AdminUser;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class AdminUserView extends AdminUser
+class AdminUserView extends AdminUser implements ViewModelInterface
 {
 
     use ViewModel;
@@ -24,43 +25,32 @@ class AdminUserView extends AdminUser
         return "管理员";
     }
 
-    public function withInputs(array $inputs)
-    {
-        if(isset($inputs['password']) && !$inputs['password']){
-            unset($inputs['password']);
-        }
-        if($this->exists){
-            unset($inputs['username']);
-        }
-    }
 
-    public function withInputsByRequest(Request $request){
-        $inputs = $request->only([
-            'username',
-            'nickname',
-            'password',
-            'repassword',
-            'status',
-        ]);
-        $this->withInputs($inputs);
+    public function inject(array $inputs)
+    {
+        $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
+        if(isset($validatedAttributes['password_confirmation'])){
+           unset($validatedAttributes['password_confirmation']);
+        }
+        $this->fill($validatedAttributes);
     }
 
     public function getRules(){
         return [
             'username' => $this->exists ? [
-                "required",
                 Rule::unique("admin_users")->ignore($this->id),
                 "admin_username"
             ] : "required|unique:admin_users|username",
-            'nickname' => "required|min:6|max:20",
-            'password' => "admin_password",
-            'repassword' => "same:password",
+            'nickname' => "required|min:4|max:20",
+            'password' => "admin_password|min:6",
+            'password_confirmation' => "same:password",
+            'status' => "required|in:0,1"
         ];
     }
 
     public function toForm()
     {
-        return Factory::buildForm([
+        $fields = [
             [
                 'type' => "input",
                 'name' => "username",
@@ -79,8 +69,8 @@ class AdminUserView extends AdminUser
             ],
             [
                 'type' => "password",
-                'name' => "repassword",
-                'label' => "重复密码",
+                'name' => "password_confirmation",
+                'label' => "确认密码",
             ],
             [
                 'type' => "radio",
@@ -98,7 +88,10 @@ class AdminUserView extends AdminUser
                     ],
                 ],
             ],
-        ])->withValue($this->toArray());
+        ];
+        return $this->createFormBuilder($fields)
+            //->withErrors(session()->get("errors"))
+            ->getForm();
     }
 
     public function toGrid()
@@ -134,12 +127,5 @@ class AdminUserView extends AdminUser
                 }
             ],
         ])->withViewModel($this);
-    }
-
-
-    public function fillForLogin($attributes = []){
-        foreach ($attributes as $key => $value){
-            $this->setAttribute($key, $value);
-        }
     }
 }

@@ -18,6 +18,8 @@ Route::middleware("auth:admin")->group(function(){
     \Illuminate\Support\Facades\Route::resource("category", "CategoryController")->names("admin.category");
 
     \Illuminate\Support\Facades\Route::resource("article", "ArticleController")->names("admin.article");
+
+    \Illuminate\Support\Facades\Route::resource("form", "FormController")->names("admin.form");
 });
 
 if(env("APP_DEBUG", false)){

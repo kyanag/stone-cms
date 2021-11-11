@@ -60,7 +60,7 @@ class ArticleView extends Article
                 ],
             ],
         ];
-        return Factory::buildForm($fields)->withValue($this);
+        return $this->createFormBuilder($fields)->getForm();
     }
 
     public function toGrid()

@@ -3,23 +3,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Interfaces\ViewModelInterface;
-use App\Admin\Models\ViewModel;
+
+use App\Admin\Interfaces\ResourceOperator;
+use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\ViewErrorBag;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-trait QuickControllerTrait
+abstract class ViewController extends Controller
 {
 
     /**
-     * @return ViewModelInterface
+     * @return ResourceOperator|Model
      */
-    abstract protected function getModel($id = null);
+    abstract protected function getResourceOperator();
 
 
     /**
@@ -28,10 +25,10 @@ trait QuickControllerTrait
      */
     public function index(Request $request)
     {
-        $model = $this->getModel();
+        $operator = $this->getResourceOperator();
 
         return view("admin::common.index", [
-            'model' => $model,
+            'model' => $operator,
         ]);
     }
 
@@ -42,10 +39,10 @@ trait QuickControllerTrait
      */
     public function create(Request $request)
     {
-        $model = $this->getModel();
+        $operator = $this->getResourceOperator();
 
         return view("admin::common.create", [
-            'model' => $model,
+            'model' => $operator,
         ]);
     }
 
@@ -56,12 +53,12 @@ trait QuickControllerTrait
      */
     public function store(Request $request)
     {
-        $model = $this->getModel();
+        $operator = $this->getResourceOperator();
 
-        $inputs = $model->toForm()->submit($request->input());
-        $model->inject($inputs);
+        $inputs = $operator->toForm()->submit($request->input());
+        $operator->inject($inputs);
 
-        if($model->saveOrFail()){
+        if($operator->saveOrFail()){
             return back()->with("success", "保存成功!");
         }else{
             return back()->withInput()->with("danger", "保存失败!");
@@ -76,10 +73,11 @@ trait QuickControllerTrait
      */
     public function show($id)
     {
-        $model = $this->getModel($id);
+        $operator = $this->getResourceOperator()
+            ->withModel($id);
 
         return view("admin::common.show", [
-            'model' => $model,
+            'model' => $operator,
         ]);
     }
 
@@ -91,13 +89,11 @@ trait QuickControllerTrait
      */
     public function edit(Request $request, $id)
     {
-        $model = $this->getModel($id);
-        if(is_null($model)){
-            throw new NotFoundHttpException("找不到的内容!");
-        }
+        $operator = $this->getResourceOperator()
+            ->withModel($id);
 
         return view("admin::common.create", [
-            'model' => $model,
+            'model' => $operator,
         ]);
     }
 
@@ -109,20 +105,18 @@ trait QuickControllerTrait
      */
     public function update(Request $request, $id)
     {
-        $model = $this->getModel($id);
-        if(is_null($model)){
-            throw new NotFoundHttpException("找不到的内容!");
-        }
+        $operator = $this->getResourceOperator()
+            ->withModel($id);
 
-        $inputs = $model->toForm()->submit($request->input());
-        $model->inject($inputs);
+        $inputs = $operator->toForm()->submit($request->input());
+        $operator->inject($inputs);
 
-        if($model->saveOrFail()){
-            return back()->with("success", "更新[{$model->showTitle()}] - {$model['title']} 成功!");
+        if($operator->saveOrFail()){
+            return back()->with("success", "更新[{$operator->showTitle()}] - {$operator['title']} 成功!");
         }else{
             return back()
                 ->withInput()
-                ->with("danger", "更新[{$model->showTitle()}] - {$model['title']} 失败!");
+                ->with("danger", "更新[{$operator->showTitle()}] - {$operator['title']} 失败!");
         }
     }
 
@@ -135,11 +129,10 @@ trait QuickControllerTrait
      */
     public function destroy($id)
     {
-        $model = $this->getModel($id);
-        if(is_null($model)){
-            throw new NotFoundHttpException("找不到的内容!");
-        }
-        if($model->delete()){
+        $operator = $this->getResourceOperator()
+            ->withModel($id);
+
+        if($operator->delete()){
             return back()->with("success", "删除成功!");
         }else{
             return back()->with("danger", "删除失败!");

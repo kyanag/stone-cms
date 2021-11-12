@@ -15,7 +15,7 @@ use Kyanag\Form\Core\Widget;
  * @package App\Admin\Interfaces
  * @mixin Model
  */
-interface ViewModelInterface
+interface ResourceOperator
 {
 
     /**
@@ -41,4 +41,12 @@ interface ViewModelInterface
      * @return void
      */
     public function inject(array $inputs);
+
+
+    /**
+     * 注入实体模型
+     * @param $pk
+     * @return self
+     */
+    public function withModel($model);
 }

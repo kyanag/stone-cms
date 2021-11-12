@@ -5,7 +5,7 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\AdminMenuController;
-use App\Admin\Interfaces\ViewModelInterface;
+use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
 use App\Admin\Supports\Tree;
 use App\Models\Admin\AdminMenu;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class AdminMenuView extends AdminMenu implements ViewModelInterface
+class AdminMenuView extends AdminMenu implements ResourceOperator
 {
     use ViewModel;
 

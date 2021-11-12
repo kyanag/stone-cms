@@ -1,5 +1,5 @@
 <?php
-/** @var \App\Admin\Interfaces\ViewModelInterface | \App\Admin\Models\ViewModel $model */
+/** @var \App\Admin\Interfaces\ResourceOperator | \App\Admin\Models\ViewModel $model */
 $currentController = request()->route()->getController();
 
 $form = $model->toForm()->withValue(request()->input());

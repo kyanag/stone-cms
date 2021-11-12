@@ -3,12 +3,12 @@
 
 namespace App\Admin\Supports;
 
-use App\Admin\Interfaces\ViewModelInterface;
+use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Models\ViewModel;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ViewModelScenarioDecorator implements ViewModelInterface
+class ViewProviderScenarioDecorator implements ResourceOperator
 {
     /**
      * @var ViewModel

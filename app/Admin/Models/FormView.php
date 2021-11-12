@@ -4,17 +4,13 @@
 namespace App\Admin\Models;
 
 
-use App\Admin\Controllers\AdminMenuController;
 use App\Admin\Controllers\FormController;
-use App\Admin\Interfaces\ViewModelInterface;
+use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
-use App\Admin\Supports\Tree;
-use App\Models\Admin\AdminMenu;
 use App\Models\Form;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
-class FormView extends Form implements ViewModelInterface
+class FormView extends Form implements ResourceOperator
 {
     use ViewModel;
 

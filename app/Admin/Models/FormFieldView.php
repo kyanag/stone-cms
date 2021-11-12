@@ -4,46 +4,34 @@
 namespace App\Admin\Models;
 
 
-use App\Admin\Controllers\AdminUserController;
+use App\Admin\Controllers\FormController;
 use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
-use App\Models\Admin\AdminUser;
-use Illuminate\Http\Request;
+use App\Models\FormField;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
-class AdminUserView extends AdminUser implements ResourceOperator
+class FormFieldView extends FormField implements ResourceOperator
 {
-
     use ViewModel;
 
-    protected $table = "admin_users";
+    protected $table = "form_fields";
 
     public function showTitle()
     {
-        return "管理员";
+        return "表单管理";
     }
-
 
     public function inject(array $inputs)
     {
         $validatedAttributes = Validator::make($inputs, $this->getRules())->validate();
-        if(isset($validatedAttributes['password_confirmation'])){
-           unset($validatedAttributes['password_confirmation']);
-        }
         $this->fill($validatedAttributes);
     }
 
     public function getRules(){
         return [
-            'username' => $this->exists ? [
-                Rule::unique("admin_users")->ignore($this->id),
-                "admin_username"
-            ] : "required|unique:admin_users|username",
-            'nickname' => "required|min:4|max:20",
-            'password' => "admin_password|min:6",
-            'password_confirmation' => "same:password",
+            'name' => $this->exists ? "" : "required|alpha_num",
+            'title' => "required|min:2|max:10",
+            'desc' => "",
             'status' => "required|in:0,1"
         ];
     }
@@ -53,24 +41,26 @@ class AdminUserView extends AdminUser implements ResourceOperator
         $fields = [
             [
                 'type' => "input",
-                'name' => "username",
-                'label' => "用户名",
+                'name' => "name",
+                'label' => "表单名称",
                 'readonly' => $this->exists,
             ],
             [
                 'type' => "input",
-                'name' => "nickname",
-                'label' => "昵称",
+                'name' => "title",
+                'label' => "表单标题",
             ],
             [
-                'type' => "password",
-                'name' => "password",
-                'label' => "密码",
+                'type' => "textarea",
+                'name' => "desc",
+                'label' => "表单简介",
             ],
             [
-                'type' => "password",
-                'name' => "password_confirmation",
-                'label' => "确认密码",
+                'type' => "input",
+                'name' => "count_fields",
+                'label' => "字段总数",
+                'readonly' => true,
+                'value' => 0,
             ],
             [
                 'type' => "radio",
@@ -89,35 +79,49 @@ class AdminUserView extends AdminUser implements ResourceOperator
                 ],
             ],
         ];
-        return $this->createFormBuilder($fields)
-            //->withErrors(session()->get("errors"))
-            ->getForm();
+        return $this->createFormBuilder($fields)->getForm();
     }
 
     public function toGrid()
     {
-        return Factory::buildGrid([
+        $columns = [
             [
                 'name' => "id",
                 'title' => "主键",
-                'sortable' => true
+                'sortable' => 1
             ],
             [
-                'name' => "username",
-                'title' => "用户名",
+                'name' => "name",
+                'title' => "表单",
             ],
             [
-                'name' => "nickname",
-                'title' => "昵称",
+                'name' => "title",
+                'title' => "表单标题",
+            ],
+            [
+                'name' => "desc",
+                'title' => "简介",
+            ],
+            [
+                'name' => "count_fields",
+                'title' => "简介",
+            ],
+            [
+                'name' => "status",
+                'title' => "状态",
+                'cast' => function($key, $model, $index){
+                    $value = $model['status'];
+                    return $value == 0 ? "<span class='badge badge-success'>启用</span>" : "<span class='badge badge-secondary'>停用</span>";
+                }
             ],
             [
                 'name' => "actionbar",
                 'title' => "操作",
-                'cast' => function($index, $model, $value){
-                    $edit_url = action([AdminUserController::class, "edit"], [
+                'cast' => function($key, $model, $index){
+                    $edit_url = action([FormController::class, "edit"], [
                         $model['id']
                     ]);
-                    $delete_url = action([AdminUserController::class, "destroy"], [
+                    $delete_url = action([FormController::class, "destroy"], [
                         $model['id']
                     ]);
                     return implode(" ", [
@@ -126,6 +130,12 @@ class AdminUserView extends AdminUser implements ResourceOperator
                     ]);
                 }
             ],
-        ])->withViewModel($this);
+        ];
+        return Factory::buildGrid($columns)->withViewModel($this);
+    }
+
+    public function getPaginator()
+    {
+        return static::query()->paginate();
     }
 }

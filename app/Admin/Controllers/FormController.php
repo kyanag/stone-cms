@@ -1,22 +1,31 @@
 <?php
-
-
 namespace App\Admin\Controllers;
 
-
+use App\Admin\Interfaces\ResourceOperator;
+use Illuminate\Database\Eloquent\Model;
 use App\Admin\Models\FormView;
-use App\Http\Controllers\Controller;
 
-class FormController extends Controller
+class FormController extends ViewController
 {
 
-    use QuickControllerTrait;
+    /**
+     * @var ResourceOperator|Model
+     */
+    protected $operator;
 
-    protected function getModel($id = null)
+    /**
+     * FormFieldController constructor.
+     * @param ResourceOperator $operator
+     */
+    public function __construct(FormView $operator)
     {
-        if(is_null($id)){
-            return new FormView();
-        }
-        return FormView::query()->find($id);
+        $this->operator = $operator;
     }
+
+
+    protected function getResourceOperator()
+    {
+        return $this->operator;
+    }
+
 }

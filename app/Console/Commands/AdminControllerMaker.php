@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Admin\Controllers\ViewController;
+use App\Admin\Interfaces\ResourceOperator;
+use App\Admin\Models\FormView;
 use Composer\Autoload\ClassLoader;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 
 class AdminControllerMaker extends Command
 {
@@ -12,7 +16,7 @@ class AdminControllerMaker extends Command
      *
      * @var string
      */
-    protected $signature = 'admin:controller {controller} {--vmClass=}';
+    protected $signature = 'admin:controller {controller} {--vmClass=} {--override}';
 
     /**
      * The console command description.
@@ -44,17 +48,14 @@ class AdminControllerMaker extends Command
         $controller = $this->generateController();
         $vmClass = $this->option("vmClass");
 
-        if(class_exists($controller)){
-            $this->output->error("已存在的控制器!");
-            exit();
-        }
         if(!class_exists($vmClass)){
             $this->output->error("不存在的视图模型");
             exit();
         }
 
+        $override = $this->option("override");
         $filename = $this->getClassFilename($controller);
-        if(file_exists($filename)){
+        if(!$override && file_exists($filename)){
             $this->output->error("目标文件已存在！");
             exit();
         }
@@ -78,21 +79,33 @@ class AdminControllerMaker extends Command
 <?php
 namespace App\Admin\Controllers;
 
+use App\Admin\Interfaces\ResourceOperator;
+use Illuminate\Database\Eloquent\Model;
 use {$vmClass};
-use App\Http\Controllers\Controller;
 
-class {$controllerBaseclass} extends Controller
+class {$controllerBaseclass} extends ViewController
 {
 
-    use QuickControllerTrait;
+    /**
+     * @var ResourceOperator|Model
+     */
+    protected \$operator;
 
-    protected function getModel(\$id = null)
+    /**
+     * FormFieldController constructor.
+     * @param ResourceOperator \$operator
+     */
+    public function __construct({$vmBaseclass} \$operator)
     {
-        if(is_null(\$id)){
-            return new {$vmBaseclass}();
-        }
-        return {$vmBaseclass}::query()->find(\$id);
+        \$this->operator = \$operator;
     }
+
+
+    protected function getResourceOperator()
+    {
+        return \$this->operator;
+    }
+
 }
 EOF;
         return $tpl;

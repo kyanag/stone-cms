@@ -2,7 +2,7 @@
 
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel as Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;

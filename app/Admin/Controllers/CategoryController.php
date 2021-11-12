@@ -1,24 +1,31 @@
 <?php
-
-
 namespace App\Admin\Controllers;
 
-
+use App\Admin\Interfaces\ResourceOperator;
+use Illuminate\Database\Eloquent\Model;
 use App\Admin\Models\CategoryView;
-use App\Http\Controllers\Controller;
 
-class CategoryController extends Controller
+class CategoryController extends ViewController
 {
 
-    use QuickControllerTrait;
+    /**
+     * @var ResourceOperator|Model
+     */
+    protected $operator;
 
-
-    protected function getModel($id = null)
+    /**
+     * FormFieldController constructor.
+     * @param ResourceOperator $operator
+     */
+    public function __construct(CategoryView $operator)
     {
-        if($id){
-            return CategoryView::query()->find($id);
-        }else{
-            return CategoryView::newModel();
-        }
+        $this->operator = $operator;
     }
+
+
+    protected function getResourceOperator()
+    {
+        return $this->operator;
+    }
+
 }

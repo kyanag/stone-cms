@@ -5,12 +5,12 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\CategoryController;
-use App\Admin\Interfaces\ViewModelInterface;
+use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
 use App\Admin\Supports\Tree;
 use App\Models\Category;
 
-class CategoryView extends Category implements ViewModelInterface
+class CategoryView extends Category implements ResourceOperator
 {
 
     use ViewModel;

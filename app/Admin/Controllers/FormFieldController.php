@@ -3,9 +3,9 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Interfaces\ResourceOperator;
 use Illuminate\Database\Eloquent\Model;
-use App\Admin\Models\AdminMenuView;
+use App\Admin\Models\FormFieldView;
 
-class AdminMenuController extends ViewController
+class FormFieldController extends ViewController
 {
 
     /**
@@ -17,7 +17,7 @@ class AdminMenuController extends ViewController
      * FormFieldController constructor.
      * @param ResourceOperator $operator
      */
-    public function __construct(AdminMenuView $operator)
+    public function __construct(FormFieldView $operator)
     {
         $this->operator = $operator;
     }

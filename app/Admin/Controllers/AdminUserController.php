@@ -1,23 +1,31 @@
 <?php
-
-
 namespace App\Admin\Controllers;
 
-
+use App\Admin\Interfaces\ResourceOperator;
+use Illuminate\Database\Eloquent\Model;
 use App\Admin\Models\AdminUserView;
-use App\Http\Controllers\Controller;
 
-class AdminUserController extends Controller
+class AdminUserController extends ViewController
 {
 
-    use QuickControllerTrait;
+    /**
+     * @var ResourceOperator|Model
+     */
+    protected $operator;
 
-    protected function getModel($id = null)
+    /**
+     * FormFieldController constructor.
+     * @param ResourceOperator $operator
+     */
+    public function __construct(AdminUserView $operator)
     {
-        if($id){
-            return AdminUserView::query()->find($id);
-        }else{
-            return AdminUserView::newModel();
-        }
+        $this->operator = $operator;
     }
+
+
+    protected function getResourceOperator()
+    {
+        return $this->operator;
+    }
+
 }

@@ -6,13 +6,19 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Form;
+use App\Models\FormField;
+use App\Models\ModelForInspector;
+use App\Observers\ContentModelObserver;
+use App\Observers\FormSchemaFieldObserver;
+use App\Observers\FormSchemaObserver;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class ContentServiceProvider extends ServiceProvider
 {
 
-    protected $cidModels = [
+    protected $contentModelClasses = [
         Category::class,
         Article::class,
     ];
@@ -34,39 +40,15 @@ class ContentServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->bootCidModels();
-        $this->bootContent();
+        $this->bootEvents();
     }
 
-    public function bootContent(){
-        Form::saved(function(Form $model){
-            $table_name = $model->getTableNameAttribute();
-            Schema::create($table_name, function(){
+    public function bootEvents(){
+        Form::observe(FormSchemaObserver::class);
+        FormField::observe(FormSchemaFieldObserver::class);
 
-            });
-        });
-        Form::deleted(function(Form $model){
-            $table_name = $model->getTableNameAttribute();
-            Schema::dropIfExists($table_name);
-        });
-    }
-
-    protected function bootCidModels(){
-        foreach ($this->cidModels as $modelClass){
-            $modelClass::creating(function($model){
-                $model->cid = $this->createCid($model);
-            });
-            $modelClass::created(function($model){
-                /** @var Article $model */
-                $content = [
-                    'cid' => $model['cid']
-                ];
-                $model->content()->create($content);
-            });
+        foreach ($this->contentModelClasses as $contentModelClass){
+            $contentModelClass::observe(ContentModelObserver::class);
         }
-    }
-
-    protected function createCid($model){
-        return md5(uniqid(class_basename($model)));
     }
 }

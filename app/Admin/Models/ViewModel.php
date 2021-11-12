@@ -22,6 +22,11 @@ use Kyanag\Form\Core\Widget;
 trait ViewModel
 {
 
+    public function withModel($model)
+    {
+        return $this->newQuery()->find($model);
+    }
+
 
     public function inject(array $inputs)
     {

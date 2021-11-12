@@ -4,7 +4,7 @@ namespace App\Models\Admin;
 
 use App\Admin\Supports\Tree;
 use App\Models\Category;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel as Model;
 use Illuminate\Support\Facades\Cache;
 
 class AdminMenu extends Model

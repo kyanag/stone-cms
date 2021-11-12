@@ -1,20 +1,31 @@
 <?php
-
-
 namespace App\Admin\Controllers;
 
-
+use App\Admin\Interfaces\ResourceOperator;
+use Illuminate\Database\Eloquent\Model;
 use App\Admin\Models\ArticleView;
-use App\Http\Controllers\Controller;
 
-class ArticleController extends Controller
+class ArticleController extends ViewController
 {
 
-    use QuickControllerTrait;
+    /**
+     * @var ResourceOperator|Model
+     */
+    protected $operator;
 
-    public function getModel($id = null)
+    /**
+     * FormFieldController constructor.
+     * @param ResourceOperator $operator
+     */
+    public function __construct(ArticleView $operator)
     {
-        return is_null($id) ? new ArticleView() : ArticleView::query()->find($id);
+        $this->operator = $operator;
+    }
+
+
+    protected function getResourceOperator()
+    {
+        return $this->operator;
     }
 
 }

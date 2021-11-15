@@ -28,4 +28,13 @@ class FormController extends ViewController
         return $this->operator;
     }
 
+    public function show($id)
+    {
+        $operator = $this->getResourceOperator()
+            ->withModel($id);
+
+        return view("admin::form.show", [
+            'model' => $operator,
+        ]);
+    }
 }

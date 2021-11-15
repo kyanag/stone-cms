@@ -118,6 +118,9 @@ class FormView extends Form implements ResourceOperator
                 'name' => "actionbar",
                 'title' => "操作",
                 'cast' => function($key, $model, $index){
+                    $show_url = action([FormController::class, "show"], [
+                        $model['id']
+                    ]);
                     $edit_url = action([FormController::class, "edit"], [
                         $model['id']
                     ]);
@@ -125,8 +128,9 @@ class FormView extends Form implements ResourceOperator
                         $model['id']
                     ]);
                     return implode(" ", [
-                        "<a class='btn btn-info' href='{$edit_url}'>编辑</a>",
-                        "<a class='btn btn-warning stone-clickajax' href='{$delete_url}' data-method='delete' data-confirm='确认是否删除'>删除</a>"
+                        "<a class='btn btn-primary btn-sm' href='{$show_url}'>查看</a>",
+                        "<a class='btn btn-info btn-sm' href='{$edit_url}'>编辑</a>",
+                        "<a class='btn btn-warning btn-sm stone-clickajax' href='{$delete_url}' data-method='delete' data-confirm='确认是否删除'>删除</a>"
                     ]);
                 }
             ],

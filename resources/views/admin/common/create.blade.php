@@ -3,11 +3,11 @@
 $currentController = request()->route()->getController();
 
 $form = $model->toForm()->withValue(request()->input());
+
+$url = $model->toAdminResourceLocation();
 if($model->exists){
-    $url = action([get_class($currentController), "update"], [$model->getKey()]);
     $form = $form->with($url, "PUT");
 }else{
-    $url = action([get_class($currentController), "store"]);
     $form = $form->with($url, "POST");
 }
 

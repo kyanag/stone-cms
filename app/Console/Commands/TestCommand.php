@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Admin\Controllers\AdminUserController;
 use App\Admin\Supports\Tree;
 use App\Models\Category;
 use App\Models\Content;
@@ -42,8 +43,6 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        /** @var Form $form */
-        $form = Form::query()->first();
-        $form->gene();
+        var_dump(AdminUserController::class);
     }
 }

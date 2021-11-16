@@ -19,9 +19,17 @@ Route::middleware("auth:admin")->group(function(){
 
     \Illuminate\Support\Facades\Route::resource("article", "ArticleController")->names("admin.article");
 
+    //字段CURD
+
+    \Illuminate\Support\Facades\Route::prefix("form/{form_id}")->group(function(){
+        \Illuminate\Support\Facades\Route::resource("field", "FormFieldController", [
+            'only' => [
+                'create', 'store', 'edit', 'update', 'destroy'
+            ],
+            'names' => "admin.form.field",
+        ]);
+    });
     \Illuminate\Support\Facades\Route::resource("form", "FormController")->names("admin.form");
-    \Illuminate\Support\Facades\Route::post("form/{form_id}/create_field", "FormController@create_field")->name("admin.form.create_field");
-    \Illuminate\Support\Facades\Route::get("form/{form_id}/{field_id}", "FormController@create_field")->name("admin.form.create_field");
 });
 
 if(env("APP_DEBUG", false)){

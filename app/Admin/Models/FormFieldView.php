@@ -134,8 +134,12 @@ class FormFieldView extends FormField implements ResourceOperator
         return Factory::buildGrid($columns)->withViewModel($this);
     }
 
-    public function getPaginator()
+
+    public function toAdminResourceLocation()
     {
-        return static::query()->paginate();
+        if(!$this->exists){
+            return action([$this->getController(), "create"], $this);
+        }
+        return action([$this->getController(), "update"], $this);
     }
 }

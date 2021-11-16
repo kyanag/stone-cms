@@ -18,7 +18,7 @@ $renderer = app("renderer");
     <div class="container-fluid pt-5">
         <div class="btn-toolbar mb-3" role="toolbar" aria-label="操作栏">
             <div class="btn-group mb-2 mr-2" role="group" aria-label="tool-group-main">
-                <a type="button" class="btn btn-primary" >新增</a>
+                <a type="button" class="btn btn-primary" href="{{ action([\App\Admin\Controllers\FormFieldController::class, "create"], $model) }}">新增</a>
             </div>
             <div class="btn-group mb-2 mr-2" role="group" aria-label="tool-group-main">
                 <div class="btn btn-outline-success">保存排序</div>

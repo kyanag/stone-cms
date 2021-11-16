@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Kyanag\Form\Core\Widget;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Trait ViewModel
@@ -24,7 +25,11 @@ trait ViewModel
 
     public function withModel($model)
     {
-        return $this->newQuery()->find($model);
+        $model = $this->newQuery()->find($model);
+        if(is_null($model)){
+            throw new NotFoundHttpException();
+        }
+        return $model;
     }
 
 
@@ -74,5 +79,18 @@ trait ViewModel
     public static function newModel()
     {
         return new static();
+    }
+
+    public function toAdminResourceLocation()
+    {
+        if(!$this->exists){
+            return action([$this->getController(), "create"], $this);
+        }
+        return action([$this->getController(), "update"], $this);
+    }
+
+    protected function getController(){
+        $basename = str_replace("View", "", class_basename($this));
+        return "App\\Admin\\Controllers\\{$basename}Controller";
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Form;
 use App\Models\FormField;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class FormSchemaFieldObserver
@@ -34,8 +35,9 @@ class FormSchemaFieldObserver
             $this->addColumn(
                 $formField->toSchemaColumn(),
                 $table
-            );
+            )->before("created_at");
         });
+        Log::info("");
     }
 
     /**
@@ -49,7 +51,7 @@ class FormSchemaFieldObserver
         /** @var Form $form */
         $form = $formField->form;
         Schema::table($form->tableName(), function(Blueprint $table) use($formField){
-            $this->addColumn(
+            $table->addColumn(
                 $formField->toSchemaColumn(),
                 $table
             );
@@ -67,13 +69,18 @@ class FormSchemaFieldObserver
         /** @var Form $form */
         $form = $formField->form;
         Schema::table($form->tableName(), function(Blueprint $table) use($formField){
-            $table->dropColumn($formField->name);
+            $table->dropColumn($formField->title);
         });
     }
 
 
+    /**
+     * @param ColumnDefinition $column
+     * @param Blueprint $table
+     * @return ColumnDefinition
+     */
     protected function addColumn(ColumnDefinition $column, Blueprint $table)
     {
-        $table->addColumn($column->get("type"), $column->get("name"), $column->getAttributes());
+        return $table->addColumn($column->get("type"), $column->get("name"), $column->getAttributes());
     }
 }

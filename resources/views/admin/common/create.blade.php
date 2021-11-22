@@ -2,9 +2,10 @@
 /** @var \App\Admin\Interfaces\ResourceOperator | \App\Admin\Models\ViewModel $model */
 $currentController = request()->route()->getController();
 
-$form = $model->toForm()->withValue(request()->input());
+$form = $model->toForm()->withValue(request()->old());
 
 $url = $model->toAdminResourceLocation();
+
 if($model->exists){
     $form = $form->with($url, "PUT");
 }else{
@@ -22,7 +23,7 @@ $renderer = app("renderer");
 
 @section('main')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h4">{{ $model->exists ? "修改" : "新增" }} {{ $model->showTitle() }}</h1>
+        <h1 class="h4">{{ $model->showTitle() }} {{ $model->exists ? "修改" : "新增" }}</h1>
     </div>
     <div>
         @if(session()->has("errors"))

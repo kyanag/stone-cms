@@ -15,12 +15,16 @@ class HighTypeManager
     protected $types = [];
 
 
-    public function register($name, $highTypeProvider)
+    public function register($highTypeProvider)
     {
+        if(class_exists($highTypeProvider)){
+            $highTypeProvider = app()->make($highTypeProvider);
+        }
         if($highTypeProvider instanceof \Closure){
             $highTypeProvider = call_user_func($highTypeProvider, $this);
         }
         if($highTypeProvider instanceof HighTypeProvider){
+            $name = $highTypeProvider->id();
             $this->types[$name] = $highTypeProvider;
             return $this;
         }
@@ -46,30 +50,13 @@ class HighTypeManager
         throw new \Exception("[{$name}] HighTypeProvider not exists!");
     }
 
-    /**
-     * @param $name
-     * @param $type
-     * @param array $options
-     * @return ColumnDefinition
-     */
-    public function createColumnDefinition($name, $type, $options = [])
+    public function toOptions()
     {
-        return $this->getProvider($type)->forSchema($name, $type, $options);
-    }
-
-    /**
-     * @param $name
-     * @param $type
-     * @param array $options
-     * @return Widget
-     */
-    public function createFormField($name, $type, $options = [])
-    {
-
-    }
-
-    public function createGridColumn($name, $type, $options = [])
-    {
-
+        return collect($this->getTypes())->map(function(HighTypeProvider $provider, $id){
+            return [
+                'label' => $provider->name(),
+                'value' => $provider->id(),
+            ];
+        })->values()->toArray();
     }
 }

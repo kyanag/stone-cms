@@ -4,10 +4,12 @@
 namespace App\Admin\Models;
 
 
+use App\Admin\Content\HighTypeManager;
 use App\Admin\Controllers\FormController;
 use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
 use App\Models\FormField;
+use Illuminate\Database\Schema\ColumnDefinition;
 use Illuminate\Support\Facades\Validator;
 
 class FormFieldView extends FormField implements ResourceOperator
@@ -18,7 +20,7 @@ class FormFieldView extends FormField implements ResourceOperator
 
     public function showTitle()
     {
-        return "表单管理";
+        return "【{$this->form->title}】 字段管理";
     }
 
     public function inject(array $inputs)
@@ -32,7 +34,8 @@ class FormFieldView extends FormField implements ResourceOperator
             'name' => $this->exists ? "" : "required|alpha_num",
             'title' => "required|min:2|max:10",
             'desc' => "",
-            'status' => "required|in:0,1"
+            'type' => "",
+            'is_required' => "required|in:0,1"
         ];
     }
 
@@ -42,41 +45,31 @@ class FormFieldView extends FormField implements ResourceOperator
             [
                 'type' => "input",
                 'name' => "name",
-                'label' => "表单名称",
+                'label' => "字段名称",
                 'readonly' => $this->exists,
             ],
             [
                 'type' => "input",
                 'name' => "title",
-                'label' => "表单标题",
+                'label' => "字段标题",
             ],
             [
                 'type' => "textarea",
                 'name' => "desc",
-                'label' => "表单简介",
+                'label' => "字段简介",
             ],
             [
-                'type' => "input",
-                'name' => "count_fields",
-                'label' => "字段总数",
-                'readonly' => true,
-                'value' => 0,
+                'type' => "select",
+                'name' => "type",
+                'label' => "字段类型",
+                'options' => $this->toFormOptions(),
             ],
             [
-                'type' => "radio",
-                'name' => "status",
-                'label' => "状态",
+                'id' => "switch-is_required",
+                'type' => "switch",
+                'name' => "is_required",
+                'label' => "必填",
                 'value' => 0,
-                'options' => [
-                    [
-                        'label' => "正常",
-                        'value' => 0
-                    ],
-                    [
-                        'label' => "停用",
-                        'value' => 1
-                    ],
-                ],
             ],
         ];
         return $this->createFormBuilder($fields)->getForm();
@@ -138,8 +131,180 @@ class FormFieldView extends FormField implements ResourceOperator
     public function toAdminResourceLocation()
     {
         if(!$this->exists){
-            return action([$this->getController(), "create"], $this);
+            return action([$this->getController(), "store"], [$this->form_id]);
         }
-        return action([$this->getController(), "update"], $this);
+        return action([$this->getController(), "update"], [$this->form_id, $this]);
+    }
+
+    public function fireModelEvent($event, $halt = true)
+    {
+        return parent::fireModelEvent($event, $halt);
+    }
+
+    /**
+     * @return ColumnDefinition
+     */
+    public function toSchemaColumn()
+    {
+        $attributes = [
+            'type' => "string",
+            'name' => $this->name,
+            'default' => "",
+        ];
+        switch($this->type){
+            case "image":
+            case "file":
+            case "string":
+                $attributes['type'] = "string";
+                $attributes['length'] = 255;
+                break;
+            case "number":
+                $attributes['type'] = "decimal";
+                $attributes['default'] = 0;
+                $attributes['total'] = 8;
+                $attributes['places'] = 2;
+                break;
+            case "datetime":
+                $attributes['type'] = "timestamp";
+                $attributes['precision'] = 0;
+                break;
+            case "images":
+            case "files":
+            case "text":
+                $attributes['type'] = "text";
+                break;
+        }
+        return new ColumnDefinition($attributes);
+    }
+
+    public function toGridColumn()
+    {
+        return [
+            'name' => "id",
+            'title' => "主键",
+        ];
+    }
+
+    public function toFormField()
+    {
+        return [
+            'name' => "id",
+            'title' => "主键",
+        ];
+    }
+
+    public function toFormOptions(){
+        return collect(static::typeProviders())->map(function ($value, $key){
+            return [
+                'label' => $value['label'],
+                'value' => $key,
+            ];
+        })->values();
+    }
+
+    /**
+     * 提供的字段类型
+     * @return array
+     */
+    public static function typeProviders(){
+        return [
+            //文本
+            'string' => [
+                'label' => "文本",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => [],
+            ],
+            //长文本
+            'text' => [
+                'label' => "大段文本",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "textarea",
+                ],
+                'grid' => [],
+            ],
+            //数字类型
+            'number' => [
+                'label' => "数字",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "textarea",
+                    'style' => "width:100px",
+                ],
+                'grid' => [],
+            ],
+            //时间
+            'datetime' => [
+                'label' => "时间",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => [],
+            ],
+            //图片类型
+            'image' => [
+                'label' => "图片",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => [],
+            ],
+            //多图
+            'images' => [
+                'label' => "多图",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => [],
+            ],
+            //单文件
+            'file' => [
+                'label' => "多图",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => [],
+            ],
+            //多文件册
+            'files' => [
+                'label' => "多图",
+                'schema' => [
+                    'type' => "string",
+                    'length' => 50,
+                ],
+                'form' => [
+                    'type' => "input",
+                ],
+                'grid' => []
+            ],
+        ];
     }
 }

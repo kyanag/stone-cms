@@ -10,28 +10,43 @@ use Illuminate\Database\Schema\ColumnDefinition;
 abstract class HighTypeProvider
 {
 
-    public function forSchema($name, $type, $options = [])
+    public function buildSchemaColumn(FormField $field)
     {
-
-    }
-
-    public function forForm($name, $type, $options = [])
-    {
-        return [
-            'type' => $this->getFormType($name, $type, $options = []),
-            'name' => $name,
-            'help' => @$options['desc'],
+        $attributes = [
+            'type' => $this->getSchemaColumnType($field),
+            'name' => $field->title,
         ];
+        return new ColumnDefinition($attributes);
     }
 
-    public function forGrid($name, $type, $options = [])
+    public function buildGridColumn(FormField $field)
+    {
+
+    }
+
+    public function buildFormField(FormField $field)
     {
 
     }
 
 
-    protected function getFormType($name, $type, $options = [])
+    protected function getFormType(FormField $field)
     {
         return "input";
+    }
+
+    protected function getSchemaColumnType(FormField $field)
+    {
+        return "string";
+    }
+
+    public function id()
+    {
+        return class_basename(static::class);
+    }
+
+    public function name()
+    {
+        return class_basename(static::class);
     }
 }

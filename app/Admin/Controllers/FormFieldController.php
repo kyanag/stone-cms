@@ -19,8 +19,7 @@ class FormFieldController extends ViewController
      */
     public function __construct(FormFieldView $operator)
     {
-        //var_dump(request()->route());exit();
-        $operator->model_id = 1;
+        $operator->form_id = request()->route("form");
         $this->operator = $operator;
     }
 

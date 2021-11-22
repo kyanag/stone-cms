@@ -2,17 +2,20 @@
 
 namespace App\Providers;
 
+use App\Admin\Content\HighTypeManager;
+use App\Admin\Content\HighTypes\DatetimeProvider;
+use App\Admin\Content\HighTypes\ImageProvider;
+use App\Admin\Content\HighTypes\ImagesProvider;
+use App\Admin\Content\HighTypes\NumberProvider;
+use App\Admin\Content\HighTypes\StringProvider;
+use App\Admin\Content\HighTypes\TextProvider;
+use App\Admin\Models\FormFieldView;
+use App\Admin\Models\FormView;
 use App\Models\Article;
 use App\Models\Category;
-use App\Models\Content;
-use App\Models\Form;
-use App\Models\FormField;
-use App\Models\ModelForInspector;
 use App\Observers\ContentModelObserver;
 use App\Observers\FormSchemaFieldObserver;
 use App\Observers\FormSchemaObserver;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class ContentServiceProvider extends ServiceProvider
@@ -30,7 +33,21 @@ class ContentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+//        $this->app->singleton(HighTypeManager::class, function($app){
+//            $highTypes = [
+//                StringProvider::class,
+//                TextProvider::class,
+//                NumberProvider::class,
+//                ImageProvider::class,
+//                ImagesProvider::class,
+//                DatetimeProvider::class,
+//            ];
+//            $manager = new HighTypeManager();
+//            foreach ($highTypes as $highType){
+//                $manager->register($highType);
+//            }
+//            return $manager;
+//        });
     }
 
     /**
@@ -43,9 +60,14 @@ class ContentServiceProvider extends ServiceProvider
         $this->bootEvents();
     }
 
-    public function bootEvents(){
-        Form::observe(FormSchemaObserver::class);
-        FormField::observe(FormSchemaFieldObserver::class);
+    private function bootHighTypes()
+    {
+
+    }
+
+    private function bootEvents(){
+        FormView::observe(FormSchemaObserver::class);
+        FormFieldView::observe(FormSchemaFieldObserver::class);
 
         foreach ($this->contentModelClasses as $contentModelClass){
             $contentModelClass::observe(ContentModelObserver::class);

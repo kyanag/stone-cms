@@ -84,7 +84,7 @@ trait ViewModel
     public function toAdminResourceLocation()
     {
         if(!$this->exists){
-            return action([$this->getController(), "create"], $this);
+            return action([$this->getController(), "store"], $this);
         }
         return action([$this->getController(), "update"], $this);
     }

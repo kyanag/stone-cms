@@ -21,7 +21,7 @@ Route::middleware("auth:admin")->group(function(){
 
     //字段CURD
 
-    \Illuminate\Support\Facades\Route::prefix("form/{form_id}")->group(function(){
+    \Illuminate\Support\Facades\Route::prefix("form/{form}")->group(function(){
         \Illuminate\Support\Facades\Route::resource("field", "FormFieldController", [
             'only' => [
                 'create', 'store', 'edit', 'update', 'destroy'

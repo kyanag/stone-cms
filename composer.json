@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "doctrine/dbal": "^3.1",
         "fideloper/proxy": "^4.0",
         "kyanag/form": "dev-master",
         "laravel/framework": "^6.18.35",

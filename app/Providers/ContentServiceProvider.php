@@ -33,21 +33,7 @@ class ContentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        $this->app->singleton(HighTypeManager::class, function($app){
-//            $highTypes = [
-//                StringProvider::class,
-//                TextProvider::class,
-//                NumberProvider::class,
-//                ImageProvider::class,
-//                ImagesProvider::class,
-//                DatetimeProvider::class,
-//            ];
-//            $manager = new HighTypeManager();
-//            foreach ($highTypes as $highType){
-//                $manager->register($highType);
-//            }
-//            return $manager;
-//        });
+
     }
 
     /**
@@ -66,9 +52,8 @@ class ContentServiceProvider extends ServiceProvider
     }
 
     private function bootEvents(){
-        FormView::observe(FormSchemaObserver::class);
-        FormFieldView::observe(FormSchemaFieldObserver::class);
-
+//        FormView::observe(FormSchemaObserver::class);
+//        FormFieldView::observe(FormSchemaFieldObserver::class);
         foreach ($this->contentModelClasses as $contentModelClass){
             $contentModelClass::observe(ContentModelObserver::class);
         }

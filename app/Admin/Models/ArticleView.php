@@ -35,7 +35,7 @@ class ArticleView extends Article
             ],
             [
                 'type' => "input",
-                'name' => "author_id",
+                'name' => "author",
                 'label' => "作者",
             ],
             [

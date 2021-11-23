@@ -141,41 +141,7 @@ class FormFieldView extends FormField implements ResourceOperator
         return parent::fireModelEvent($event, $halt);
     }
 
-    /**
-     * @return ColumnDefinition
-     */
-    public function toSchemaColumn()
-    {
-        $attributes = [
-            'type' => "string",
-            'name' => $this->name,
-            'default' => "",
-        ];
-        switch($this->type){
-            case "image":
-            case "file":
-            case "string":
-                $attributes['type'] = "string";
-                $attributes['length'] = 255;
-                break;
-            case "number":
-                $attributes['type'] = "decimal";
-                $attributes['default'] = 0;
-                $attributes['total'] = 8;
-                $attributes['places'] = 2;
-                break;
-            case "datetime":
-                $attributes['type'] = "timestamp";
-                $attributes['precision'] = 0;
-                break;
-            case "images":
-            case "files":
-            case "text":
-                $attributes['type'] = "text";
-                break;
-        }
-        return new ColumnDefinition($attributes);
-    }
+
 
     public function toGridColumn()
     {

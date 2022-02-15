@@ -3,10 +3,12 @@
 
 namespace App\Admin\Models;
 
-use App\Admin\Supports\ActiveForm;
+use App\Admin\Elements\ActiveForm;
 use App\Admin\Supports\FormBuilder;
-use App\Admin\Widgets\Form;
-use App\Admin\Widgets\Grid;
+use App\Admin\Supports\GridBuilder;
+use App\Admin\Widgets\Column;
+use App\Admin\Elements\Form\Form;
+use App\Admin\Elements\Grid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -23,13 +25,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 trait ViewModel
 {
 
-    public function withModel($model)
+    public function withRecord($record)
     {
-        $model = $this->newQuery()->find($model);
-        if(is_null($model)){
+        $record = $this->newQuery()->find($record);
+        if(is_null($record)){
             throw new NotFoundHttpException();
         }
-        return $model;
+        return $record;
     }
 
 
@@ -54,43 +56,5 @@ trait ViewModel
     public function showDescription()
     {
         return $this->showTitle();
-    }
-
-
-    public function createFormBuilder($fields = [])
-    {
-        $builder = new FormBuilder($this->toArray());
-        foreach ($fields as $field){
-            $builder->add($field);
-        }
-        return $builder;
-    }
-
-    public function toGridForm()
-    {
-        return $this->toForm()->withAttribute("submitText", "搜索");
-    }
-
-    public function toView()
-    {
-        return $this->toForm();
-    }
-
-    public static function newModel()
-    {
-        return new static();
-    }
-
-    public function toAdminResourceLocation()
-    {
-        if(!$this->exists){
-            return action([$this->getController(), "store"], $this);
-        }
-        return action([$this->getController(), "update"], $this);
-    }
-
-    protected function getController(){
-        $basename = str_replace("View", "", class_basename($this));
-        return "App\\Admin\\Controllers\\{$basename}Controller";
     }
 }

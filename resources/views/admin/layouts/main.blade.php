@@ -47,22 +47,22 @@
     <div id="sidebar">
         <div id="sidenav">
             <ul class="nav flex-column">
-                @foreach(\App\Admin\Models\AdminMenuView::tree() as $item)
+                @foreach(\App\Admin\Admin::menus() as $index => $menu)
                 <li class="nav-item">
-                    @if(count($item['_children']) == 0)
-                        <a class="nav-link" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
+                    @if(!isset($menu['children']))
+                        <a class="nav-link" href="{{ $menu['url'] }}">{{ $menu['title'] }}</a>
                     @else
-                        <div class="nav-link" data-toggle="collapse" data-target="#sidenav-node-{{ $item['id'] }}" aria-expanded="false" aria-controls="sidenav-node-{{ $item['id'] }}">
-                            <a href="{{ @$item['path'] }}" class="pr-1">{{ $item['title'] }}</a>
+                        <div class="nav-link" data-toggle="collapse" data-target="#sidenav-node-{{ $index }}" aria-expanded="false" aria-controls="sidenav-node-{{ $index }}">
+                            <a href="{{ $menu['url'] }}" class="pr-1">{{ $menu['title'] }}</a>
                             <div class="float-right px-2 hover-bg-download"><i class="fa fa-angle-down fa-3" aria-hidden="true"></i></div>
                         </div>
                     @endif
 
-                    @if(count($item['_children']))
-                    <ul class="nav flex-column collapse" id="sidenav-node-{{ $item['id'] }}">
-                        @foreach($item['_children'] as $item)
+                    @if(isset($menu['children']))
+                    <ul class="nav flex-column collapse" id="sidenav-node-{{ $index }}">
+                        @foreach($menu['children'] as $item)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ @$item['path'] }}">{{ $item['title'] }}</a>
+                            <a class="nav-link" href="{{ $item['url'] }}">{{ $item['title'] }}</a>
                         </li>
                         @endforeach
                     </ul>

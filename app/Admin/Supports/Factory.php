@@ -4,35 +4,35 @@
 namespace App\Admin\Supports;
 
 
+use App\Admin\Elements\ActiveForm;
+use App\Admin\Elements\Element;
 use App\Admin\Widgets\Column;
-use App\Admin\Widgets\Form;
-use App\Admin\Widgets\Grid;
+use App\Admin\Elements\Grid;
 use function Kyanag\Form\createWidget;
 
 class Factory
 {
 
-    /**
-     * @param $fields
-     * @param $viewModel
-     * @return Form
-     */
-    public static function buildForm($fields, $props = []){
-        $elements = array_map(function($props){
-            return createWidget($props);
-        }, $fields);
-        return new ActiveForm("custom::form", $props, $elements);
+    public static function createFormFromArray($fields, $record)
+    {
+        $children = [];
+        foreach($fields as $name => $field)
+        {
+            if(isset($record[$name])){
+                $field['value'] = $record[$name];
+            }
+            $type = $field['type'];
+            unset($field['type']);
+
+            $children[] = new Element($type, $field);
+        }
+        return new ActiveForm("form", [
+            'submitText' => "登录"
+        ], $children);
     }
 
-    /**
-     * @param $columns
-     * @param $viewModel
-     * @return Grid
-     */
-    public static function buildGrid($columns, $props = []){
-        $columns = array_map(function($item){
-            return new Column("column", $item);
-        }, $columns);
-        return new Grid("custom::grid", $props, $columns);
+    public static function createGridFromArray($columns)
+    {
+
     }
 }

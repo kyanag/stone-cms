@@ -2,7 +2,7 @@
 /** @var \App\Admin\Interfaces\ResourceOperator | \App\Admin\Models\ViewModel $model */
 $currentController = request()->route()->getController();
 
-$form = $model->toForm()->withValue(request()->old());
+$form = $model->toForm();
 
 $url = $model->toAdminResourceLocation();
 
@@ -11,9 +11,6 @@ if($model->exists){
 }else{
     $form = $form->with($url, "POST");
 }
-
-/** @var \Kyanag\Form\Interfaces\Renderer $renderer */
-$renderer = app("renderer");
 ?>
 
 @extends('admin::layouts.main')
@@ -38,7 +35,7 @@ $renderer = app("renderer");
     {{--    <h2>Section title</h2>--}}
     <div class="container-fluid">
         {!!
-            $renderer->render($form);
+            $form->render();
         !!}
     </div>
 @endsection

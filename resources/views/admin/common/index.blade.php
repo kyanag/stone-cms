@@ -2,15 +2,6 @@
 /** @var \App\Admin\Models\ViewModel|\Illuminate\Database\Eloquent\Model $model */
 
 $grid = $model->toGrid();
-
-$currentController = request()->route()->getController();
-$grid->withLinks([
-    [
-        'url' => action([get_class($currentController), "create"]),
-        'title' => "新增",
-        'type' => "primary",
-    ]
-]);
 ?>
 
 @extends('admin::layouts.main')
@@ -24,7 +15,7 @@ $grid->withLinks([
     {{--    <h2>Section title</h2>--}}
     <div class="container-fluid">
         {!!
-            app("renderer")->render($grid)
+            $grid->render();
         !!}
     </div>
 @endsection

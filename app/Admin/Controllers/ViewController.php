@@ -58,7 +58,7 @@ abstract class ViewController extends Controller
         $inputs = $operator->toForm()->submit($request->input());
         $operator->inject($inputs);
 
-        if($operator->saveOrFail()){
+        if($operator->flush()){
             return back()->with("success", "保存成功!");
         }else{
             return back()->withInput()->with("danger", "保存失败!");
@@ -74,7 +74,7 @@ abstract class ViewController extends Controller
     public function show($id)
     {
         $operator = $this->getResourceOperator()
-            ->withModel($id);
+            ->withRecord($id);
 
         return view("admin::common.show", [
             'model' => $operator,
@@ -90,7 +90,7 @@ abstract class ViewController extends Controller
     public function edit(Request $request, $id)
     {
         $operator = $this->getResourceOperator()
-            ->withModel($id);
+            ->withRecord($id);
 
         return view("admin::common.create", [
             'model' => $operator,
@@ -106,12 +106,12 @@ abstract class ViewController extends Controller
     public function update(Request $request, $id)
     {
         $operator = $this->getResourceOperator()
-            ->withModel($id);
+            ->withRecord($id);
 
         $inputs = $operator->toForm()->submit($request->input());
         $operator->inject($inputs);
 
-        if($operator->saveOrFail()){
+        if($operator->flush()){
             return back()->with("success", "更新[{$operator->showTitle()}] - {$operator['title']} 成功!");
         }else{
             return back()
@@ -130,9 +130,9 @@ abstract class ViewController extends Controller
     public function destroy($id)
     {
         $operator = $this->getResourceOperator()
-            ->withModel($id);
+            ->withRecord($id);
 
-        if($operator->delete()){
+        if($operator->asDeprecated()->flush()){
             return back()->with("success", "删除成功!");
         }else{
             return back()->with("danger", "删除失败!");

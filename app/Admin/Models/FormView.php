@@ -82,6 +82,9 @@ class FormView extends Form implements ResourceOperator
         return $this->createFormBuilder($fields)->getForm();
     }
 
+    /**
+     * @return \App\Admin\Elements\Grid
+     */
     public function toGrid()
     {
         $columns = [
@@ -135,7 +138,13 @@ class FormView extends Form implements ResourceOperator
                 }
             ],
         ];
-        return Factory::buildGrid($columns)->withViewModel($this);
+        return $this->createGridBuilder($columns)
+            ->withLink([
+                'type' => "primary",
+                'url' => route("admin.form.create"),
+                'title' => "添加"
+            ])
+            ->getGrid();
     }
 
     public function getPaginator()

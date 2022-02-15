@@ -15,35 +15,33 @@ class LoginController extends Controller
 {
 
     protected function getForm(Request $request){
-        return Factory::buildForm([
-            [
+        $fields = [
+            'username' => [
                 'type' => "input",
                 'name' => "username",
                 'label' => "账户",
             ],
-            [
+            'password' => [
                 'type' => "password",
                 'name' => "password",
                 'label' => "密码"
             ],
-            [
+            'remember_me' => [
                 'type' => "switch",
                 'name' => "remember_me",
                 'label' => "记住我",
                 'value' => 1
             ]
-        ], $this->getViewModel($request), [
+        ];
+        return Factory::createFormFromArray($fields, $request->old())->withAttributes([
             'submitText' => "登录"
-        ])->withValue($request->old());
-    }
-
-    protected function getViewModel(Request $request){
-        return new AdminUserView();
+        ]);
     }
 
     public function entry(Request $request){
+        $form = $this->getForm($request);
         return view("admin::login", [
-            'loginForm' => $this->getForm($request),
+            'loginForm' => $form,
         ]);
     }
 

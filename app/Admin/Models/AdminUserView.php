@@ -8,10 +8,8 @@ use App\Admin\Controllers\AdminUserController;
 use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
 use App\Models\Admin\AdminUser;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class AdminUserView extends AdminUser implements ResourceOperator
 {
@@ -89,9 +87,7 @@ class AdminUserView extends AdminUser implements ResourceOperator
                 ],
             ],
         ];
-        return $this->createFormBuilder($fields)
-            //->withErrors(session()->get("errors"))
-            ->getForm();
+        return Factory::createFormFromArray($fields, $this);
     }
 
     public function toGrid()

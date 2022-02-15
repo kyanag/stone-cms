@@ -4,75 +4,80 @@
 namespace App\Admin\Widgets;
 
 
+use App\Admin\Supports\Configurable;
 use Kyanag\Form\Core\Widget;
 
-class Column extends Widget
+class Column
 {
-
+    use Configurable;
 
     public function isSortable(){
-        return boolval(@$this->attributes['sortable']);
+        return boolval(@$this->configure['sortable']);
+    }
+
+    public function getName(){
+        return @$this->configure['name'];
     }
 
     public function getTitle(){
-        return @$this->attributes['title'];
+        return @$this->configure['title'];
     }
 
     public function getHeaderClass(){
-        return @$this->attributes['headerClass'];
+        return @$this->configure['headerClass'];
     }
 
     public function getHeaderStyle(){
-        return @$this->attributes['headerStyle'];
+        return @$this->configure['headerStyle'];
     }
 
     public function getRowClass($key, $item, $index){
-        if(isset($this->attributes['rowClass'])){
-            if(is_callable($this->attributes['rowClass'])){
-                return call_user_func_array($this->attributes['rowClass'], [$key, $item, $index]);
+        if(isset($this->configure['rowClass'])){
+            if(is_callable($this->configure['rowClass'])){
+                return call_user_func_array($this->configure['rowClass'], [$key, $item, $index]);
             }else{
-                return $this->attributes['rowClass'];
+                return $this->configure['rowClass'];
             }
         }
         return null;
     }
 
     public function getRowStyle($key, $item, $index){
-        if(isset($this->attributes['rowStyle'])){
-            if(is_callable($this->attributes['rowStyle'])){
-                return call_user_func_array($this->attributes['rowStyle'], [$key, $item, $index]);
+        if(isset($this->configure['rowStyle'])){
+            if(is_callable($this->configure['rowStyle'])){
+                return call_user_func_array($this->configure['rowStyle'], [$key, $item, $index]);
             }else{
-                return $this->attributes['rowStyle'];
+                return $this->configure['rowStyle'];
             }
         }
         return null;
     }
 
     public function getCellStyle($key, $item, $index){
-        if(isset($this->attributes['cellStyle'])){
-            if(is_callable($this->attributes['cellStyle'])){
-                return call_user_func_array($this->attributes['cellStyle'], [$key, $item, $index]);
+        if(isset($this->configure['cellStyle'])){
+            if(is_callable($this->configure['cellStyle'])){
+                return call_user_func_array($this->configure['cellStyle'], [$key, $item, $index]);
             }else{
-                return $this->attributes['cellStyle'];
+                return $this->configure['cellStyle'];
             }
         }
         return null;
     }
 
     public function getCellClass($key, $item, $index){
-        if(isset($this->attributes['cellClass'])){
-            if(is_callable($this->attributes['cellClass'])){
-                return call_user_func_array($this->attributes['cellClass'], [$key, $item, $index]);
+        if(isset($this->configure['cellClass'])){
+            if(is_callable($this->configure['cellClass'])){
+                return call_user_func_array($this->configure['cellClass'], [$key, $item, $index]);
             }else{
-                return $this->attributes['cellClass'];
+                return $this->configure['cellClass'];
             }
         }
         return null;
     }
 
     public function __invoke($key, $item, $index){
-        if(isset($this->attributes['cast']) && is_callable($this->attributes['cast'])){
-            return call_user_func_array($this->attributes['cast'], [
+        if(isset($this->configure['cast']) && is_callable($this->configure['cast'])){
+            return call_user_func_array($this->configure['cast'], [
                 $key, $item, $index
             ]);
         }

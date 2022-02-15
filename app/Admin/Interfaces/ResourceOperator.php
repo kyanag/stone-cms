@@ -4,11 +4,9 @@
 namespace App\Admin\Interfaces;
 
 
-use App\Admin\Supports\ActiveForm;
-use App\Admin\Widgets\Form;
-use App\Admin\Widgets\Grid;
+use App\Admin\Elements\ActiveForm;
+use App\Admin\Elements\Form\Form;
 use Illuminate\Database\Eloquent\Model;
-use Kyanag\Form\Core\Widget;
 
 /**
  * Interface ViewModelInterface
@@ -17,6 +15,16 @@ use Kyanag\Form\Core\Widget;
  */
 interface ResourceOperator
 {
+
+    /**
+     * @return string
+     */
+    public function showTitle();
+
+    /**
+     * @return string
+     */
+    public function showDescription();
 
     /**
      * @return ActiveForm|Form
@@ -29,12 +37,6 @@ interface ResourceOperator
      */
     public function toGrid();
 
-
-    /**
-     * @return Widget
-     */
-    public function toView();
-
     /**
      * 注入input内容
      * @param array $inputs
@@ -44,9 +46,9 @@ interface ResourceOperator
 
 
     /**
-     * 注入实体模型
+     * 注入实体数据
      * @param $pk
      * @return self
      */
-    public function withModel($model);
+    public function withRecord($record);
 }

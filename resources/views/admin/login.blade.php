@@ -38,7 +38,7 @@
                 <div class="pt-5"></div>
                 <h2>StoneCMS</h2>
                 {!!
-                    app("renderer")->render($loginForm)
+                    $loginForm->render()
                 !!}
             </div>
         </div>

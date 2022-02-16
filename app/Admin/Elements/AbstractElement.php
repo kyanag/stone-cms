@@ -5,9 +5,9 @@ namespace App\Admin\Elements;
 
 
 use App\Admin\Interfaces\Renderable;
-use Kyanag\Form\Core\Widget;
+use App\Admin\Supports\Configure;
 
-abstract class AbstractElement extends Widget
+abstract class AbstractElement extends Configure
 {
 
     protected $type;
@@ -28,12 +28,8 @@ abstract class AbstractElement extends Widget
         $this->withAttributes($attributes);
     }
 
-    public function withAttributes(array $attributes)
-    {
-        foreach ($attributes as $name => $value){
-            $this->attributes[$name] = $value;
-        }
-        return $this;
+    public function type(){
+        return $this->type;
     }
 
     public function getType()
@@ -46,17 +42,11 @@ abstract class AbstractElement extends Widget
         return $this->children;
     }
 
-    public function __call($name, $arguments)
+    public function withAttributes(array $attributes)
     {
-        if(substr($name, 0, 2) == "is"){
-            $property = lcfirst(substr($name, 2));
-            return isset($this->attributes[$property]) && boolval($this->attributes[$property]);
+        foreach ($attributes as $name => $value){
+            $this->attributes[$name] = $value;
         }
-        if(substr($name, 0, 3) == "get"){
-            $property = lcfirst(substr($name, 3));
-            return isset($this->attributes[$property]) ? $this->attributes[$property] : null;
-        }
-        $class = static::class;
-        throw new \BadMethodCallException("Call to undefined method {$class}::{$name}");
+        return $this;
     }
 }

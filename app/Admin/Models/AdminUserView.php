@@ -5,6 +5,8 @@ namespace App\Admin\Models;
 
 
 use App\Admin\Controllers\AdminUserController;
+use App\Admin\Elements\Fields\Field;
+use App\Admin\Elements\Fields\OptionalField;
 use App\Admin\Interfaces\ResourceOperator;
 use App\Admin\Supports\Factory;
 use App\Models\Admin\AdminUser;
@@ -49,32 +51,35 @@ class AdminUserView extends AdminUser implements ResourceOperator
     public function toForm()
     {
         $fields = [
-            [
+            'username' => [
                 'type' => "input",
                 'name' => "username",
                 'label' => "用户名",
                 'readonly' => $this->exists,
+                'style' => "width:150px"
             ],
             [
                 'type' => "input",
                 'name' => "nickname",
                 'label' => "昵称",
+                'style' => "width:150px"
             ],
             [
                 'type' => "password",
                 'name' => "password",
                 'label' => "密码",
+                'style' => "width:200px"
             ],
             [
                 'type' => "password",
                 'name' => "password_confirmation",
                 'label' => "确认密码",
+                'style' => "width:200px"
             ],
-            [
-                'type' => "radio",
+            new OptionalField("radio", [
                 'name' => "status",
                 'label' => "状态",
-                'value' => 0,
+                'value' => 1,
                 'options' => [
                     [
                         'label' => "正常",
@@ -85,14 +90,14 @@ class AdminUserView extends AdminUser implements ResourceOperator
                         'value' => 1
                     ],
                 ],
-            ],
+            ]),
         ];
         return Factory::createFormFromArray($fields, $this);
     }
 
     public function toGrid()
     {
-        return Factory::buildGrid([
+        $columns = [
             [
                 'name' => "id",
                 'title' => "主键",
@@ -122,6 +127,8 @@ class AdminUserView extends AdminUser implements ResourceOperator
                     ]);
                 }
             ],
-        ])->withViewModel($this);
+        ];
+        return Factory::createGridFromArray($columns)
+            ->withPaginator($this->getPaginator());
     }
 }

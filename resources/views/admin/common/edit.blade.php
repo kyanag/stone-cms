@@ -4,11 +4,11 @@
 /** @var \App\Admin\Controllers\ViewController $currentController */
 $currentController = request()->route()->getController();
 
+$record = $operator->getRecord();
+$url = action([get_class($currentController), "update"], $record);
+
 $form = $operator->toForm();
-
-$url = $operator->toAdminResourceLocation();
-
-if($operator->exists){
+if($record->exists){
     $form = $form->with($url, "PUT");
 }else{
     $form = $form->with($url, "POST");

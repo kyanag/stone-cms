@@ -1,21 +1,20 @@
 <?php
-/** @var \App\Admin\Models\ViewModel|\Illuminate\Database\Eloquent\Model $model */
+/** @var \App\Admin\Interfaces\ResourceOperator $operator */
 
-$grid = $model->toGrid();
+$grid = $operator->toGrid();
 ?>
 
 @extends('admin::layouts.main')
 
-@section('title', $model->showTitle())
+@section('title', $operator->showTitle())
 
 @section('main')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h4">{{ $model->showTitle() }}</h1>
+        <h1 class="h4">{{ $operator->showTitle() }}</h1>
     </div>
-    {{--    <h2>Section title</h2>--}}
     <div class="container-fluid">
         {!!
-            $grid->render();
+            $operator->toGrid()->render();
         !!}
     </div>
 @endsection

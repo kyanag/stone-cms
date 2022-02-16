@@ -5,14 +5,20 @@ namespace App\Admin\Elements;
 
 
 use App\Admin\Interfaces\Renderable;
+use App\Admin\Elements\Grid\Column;
 use Illuminate\Contracts\Pagination\Paginator;
 
 class Grid implements Renderable
 {
-
+    /**
+     * @var array<Column>
+     */
     protected $columns;
 
-    protected $elements = [];
+    /**
+     * @var array<Renderable>
+     */
+    protected $widgets = [];
 
     /**
      * @var Paginator
@@ -30,6 +36,19 @@ class Grid implements Renderable
         return $this;
     }
 
+    public function hasWidget($name){
+        return isset($this->widgets[$name]);
+    }
+
+    public function getWidget($name){
+        return $this->widgets[$name];
+    }
+
+    public function getPaginator()
+    {
+        return $this->paginator;
+    }
+
     public function getColumns()
     {
         return $this->columns;
@@ -38,20 +57,6 @@ class Grid implements Renderable
     public function getItems()
     {
         return $this->paginator->items();
-    }
-
-    public function getPerPage(){
-        return $this->paginator->perPage();
-    }
-
-    public function getCurrentPage()
-    {
-        return $this->paginator->currentPage();
-    }
-
-    public function getTotalPage()
-    {
-        return $this->paginator->total();
     }
 
     public function render()

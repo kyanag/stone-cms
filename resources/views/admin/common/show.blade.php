@@ -1,5 +1,5 @@
 <?php
-/** @var \App\Admin\Models\ViewModel $model */
+/** @var \App\Admin\Models\ViewModel $operator */
 
 /** @var \Kyanag\Form\Interfaces\Renderer $renderer */
 $renderer = app("renderer");

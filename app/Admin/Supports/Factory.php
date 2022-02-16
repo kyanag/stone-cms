@@ -6,9 +6,9 @@ namespace App\Admin\Supports;
 
 use App\Admin\Elements\ActiveForm;
 use App\Admin\Elements\Element;
-use App\Admin\Widgets\Column;
+use App\Admin\Elements\Fields\Field;
+use App\Admin\Elements\Grid\Column;
 use App\Admin\Elements\Grid;
-use function Kyanag\Form\createWidget;
 
 class Factory
 {
@@ -16,15 +16,20 @@ class Factory
     public static function createFormFromArray($fields, $record)
     {
         $children = [];
-        foreach($fields as $name => $field)
+        foreach($fields as $key => $field)
         {
-            if(isset($record[$name])){
-                $field['value'] = $record[$name];
-            }
-            $type = $field['type'];
-            unset($field['type']);
+            if($field instanceof Field){
+                $element = $field;
+            }else{
+                $type = $field['type'];
+                unset($field['type']);
 
-            $children[] = new Element($type, $field);
+                $element = new Field($type, $field);
+            }
+            if(is_int($key)){
+                $key = $element->getName();
+            }
+            $children[] = $element->withValue($record[$key]);
         }
         return new ActiveForm("form", [
             'submitText' => "登录"
@@ -33,6 +38,9 @@ class Factory
 
     public static function createGridFromArray($columns)
     {
-
+        $columns = collect($columns)->map(function($column){
+            return new Column($column);
+        })->toArray();
+        return new Grid($columns);
     }
 }

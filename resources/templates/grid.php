@@ -62,7 +62,7 @@ $paginator = $widget->getPaginator();
     <thead>
     <tr>
         <?php
-        /** @var \App\Admin\Widgets\Column $column */
+        /** @var \App\Admin\Elements\Grid\Column $column */
         foreach($widget->getColumns() as $column): ?>
             <th class="<?=$column->getHeaderClass()?>" style="<?=$column->getHeaderStyle() ?>"><?=$column->getTitle()?></th>
         <?php endforeach; ?>

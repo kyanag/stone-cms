@@ -4,9 +4,8 @@
 namespace App\Admin\Elements;
 
 
-use App\Admin\Elements\AbstractElement;
 use App\Admin\Interfaces\Renderable;
-use Kyanag\Form\Core\Widget;
+use App\Admin\Supports\Configure;
 
 /**
  * Class ActiveForm
@@ -38,7 +37,8 @@ class ActiveForm extends AbstractElement implements Renderable
         return $this;
     }
 
-    public function getAction(){
+    public function getAction()
+    {
         return $this->action;
     }
 
@@ -64,7 +64,7 @@ class ActiveForm extends AbstractElement implements Renderable
         $res = [];
         /**
          * @var string $name
-         * @var Widget $child
+         * @var Configure $child
          */
         foreach ($this->getChildren() as $name => $child){
             if(!isset($attributes[$name]) or $child->isReadonly() or $child->isReadonly()){

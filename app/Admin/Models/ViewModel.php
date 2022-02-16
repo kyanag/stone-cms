@@ -3,18 +3,8 @@
 
 namespace App\Admin\Models;
 
-use App\Admin\Elements\ActiveForm;
-use App\Admin\Supports\FormBuilder;
-use App\Admin\Supports\GridBuilder;
-use App\Admin\Widgets\Column;
-use App\Admin\Elements\Form\Form;
-use App\Admin\Elements\Grid;
+use App\Admin\Elements\Form;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
-use Kyanag\Form\Core\Widget;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -32,6 +22,13 @@ trait ViewModel
             throw new NotFoundHttpException();
         }
         return $record;
+    }
+
+    /**
+     * @return Model
+     */
+    public function getRecord(){
+        return $this;
     }
 
 

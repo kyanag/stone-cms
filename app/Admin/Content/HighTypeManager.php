@@ -5,9 +5,6 @@ namespace App\Admin\Content;
 
 
 use App\Admin\Content\HighTypes\HighTypeProvider;
-use App\Models\FormField;
-use Illuminate\Database\Schema\ColumnDefinition;
-use Kyanag\Form\Core\Widget;
 
 class HighTypeManager
 {

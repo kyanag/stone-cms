@@ -1,13 +1,8 @@
 <?php
-/** @var \App\Admin\Widgets\Grid $grid */
-
-/** @var \Illuminate\Pagination\Paginator $paginator */
-$paginator = $grid->getPaginator();
-
-$toolbar = $grid->getToolbar();
+/** @var \App\Admin\Elements\Grid $grid */
 ?>
-@if($toolbar)
-    {!! $toolbar->render() !!}
+@if($grid->hasWidget("toolbar"))
+    {!! $grid->getWidget("toolbar")->render() !!}
 @endif
 <table class="table">
     <thead>
@@ -32,5 +27,5 @@ $toolbar = $grid->getToolbar();
     </tbody>
 </table>
 <nav aria-label="Page navigation example" class="float-right">
-    {!! $paginator->render() !!}
+    {!! $grid->getPaginator()->render() !!}
 </nav>

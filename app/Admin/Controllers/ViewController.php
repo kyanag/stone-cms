@@ -14,7 +14,7 @@ abstract class ViewController extends Controller
 {
 
     /**
-     * @return ResourceOperator|Model
+     * @return ResourceOperator
      */
     abstract protected function getResourceOperator();
 
@@ -28,7 +28,7 @@ abstract class ViewController extends Controller
         $operator = $this->getResourceOperator();
 
         return view("admin::common.index", [
-            'model' => $operator,
+            'operator' => $operator,
         ]);
     }
 
@@ -42,7 +42,7 @@ abstract class ViewController extends Controller
         $operator = $this->getResourceOperator();
 
         return view("admin::common.create", [
-            'model' => $operator,
+            'operator' => $operator,
         ]);
     }
 
@@ -77,7 +77,7 @@ abstract class ViewController extends Controller
             ->withRecord($id);
 
         return view("admin::common.show", [
-            'model' => $operator,
+            'operator' => $operator,
         ]);
     }
 
@@ -87,13 +87,13 @@ abstract class ViewController extends Controller
      * @param  int  $id
      * @return \Illuminate\View\View
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
         $operator = $this->getResourceOperator()
             ->withRecord($id);
 
-        return view("admin::common.create", [
-            'model' => $operator,
+        return view("admin::common.edit", [
+            'operator' => $operator,
         ]);
     }
 

@@ -1,24 +1,12 @@
 <?php
-/** @var \App\Admin\Interfaces\ModelProxy $operator */
-
-/** @var \App\Admin\Controllers\ViewController $currentController */
-$currentController = request()->route()->getController();
-
-$form = $operator->toForm();
-
-$url = action([get_class($currentController), "store"]);
-
-$form = $form->with($url, "POST");
+/** @var \App\Admin\Elements\ActiveForm $form */
 ?>
 
 @extends('admin::layouts.main')
 
-@section('title', $operator->showTitle())
-@section("description", $operator->showDescription())
-
 @section('main')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h4">{{ $operator->showTitle() }} - 新增</h1>
+        <h1 class="h4">系统设置</h1>
     </div>
     <div>
         @if(session()->has("errors"))

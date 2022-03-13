@@ -36,12 +36,20 @@ class Grid implements Renderable
         return $this;
     }
 
-    public function hasWidget($name){
+    public function hasWidget($name)
+    {
         return isset($this->widgets[$name]);
     }
 
-    public function getWidget($name){
+    public function getWidget($name)
+    {
         return $this->widgets[$name];
+    }
+
+    public function withWidget($name, Renderable $renderable)
+    {
+        $this->widgets[$name] = $renderable;
+        return $this;
     }
 
     public function getPaginator()

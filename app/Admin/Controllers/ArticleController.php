@@ -1,7 +1,8 @@
 <?php
 namespace App\Admin\Controllers;
 
-use App\Admin\Interfaces\ResourceOperator;
+use App\Admin\Interfaces\ModelProxy;
+use App\Admin\ModelProxies\ArticleProxy;
 use Illuminate\Database\Eloquent\Model;
 use App\Admin\Models\ArticleView;
 
@@ -9,23 +10,23 @@ class ArticleController extends ViewController
 {
 
     /**
-     * @var ResourceOperator|Model
+     * @var ModelProxy|Model
      */
-    protected $operator;
+    protected $proxy;
 
     /**
      * FormFieldController constructor.
-     * @param ResourceOperator $operator
+     * @param ModelProxy $proxy
      */
-    public function __construct(ArticleView $operator)
+    public function __construct(ArticleProxy $proxy)
     {
-        $this->operator = $operator;
+        $this->proxy = $proxy;
     }
 
 
-    protected function getResourceOperator()
+    protected function getModelProxy()
     {
-        return $this->operator;
+        return $this->proxy;
     }
 
 }

@@ -10,26 +10,10 @@ Route::middleware("auth:admin")->group(function(){
     });
 
     \Illuminate\Support\Facades\Route::get("home", "HomeController@home")->name("admin.home");
+    \Illuminate\Support\Facades\Route::get("config/all", "ConfigController@view")->name("admin.config.view");
+    \Illuminate\Support\Facades\Route::put("config/all", "ConfigController@update")->name("admin.config.update");
 
-    \Illuminate\Support\Facades\Route::resource("menu", "AdminMenuController")->names("admin.menu");
-
-    \Illuminate\Support\Facades\Route::resource("user", "AdminUserController")->names("admin.user");
-
-    \Illuminate\Support\Facades\Route::resource("category", "CategoryController")->names("admin.category");
-
-    \Illuminate\Support\Facades\Route::resource("article", "ArticleController")->names("admin.article");
-
-    //字段CURD
-
-    \Illuminate\Support\Facades\Route::prefix("form/{form}")->group(function(){
-        \Illuminate\Support\Facades\Route::resource("field", "FormFieldController", [
-            'only' => [
-                'create', 'store', 'edit', 'update', 'destroy'
-            ],
-            'names' => "admin.form.field",
-        ]);
-    });
-    \Illuminate\Support\Facades\Route::resource("form", "FormController")->names("admin.form");
+    \App\Admin\Admin::resources()->getRoutes();
 });
 
 if(env("APP_DEBUG", false)){

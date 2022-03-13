@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Admin\Supports\ResourceManager;
 use App\Admin\Supports\Tree;
+use App\Models\Article;
+use App\Observers\PostableObserver;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -22,12 +27,19 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        require_once app_path("Admin/functions.php");
+
         $this->app->singleton("renderer", function(){
             $p = Factory::createEngine();
             $p->addFolder("custom", resource_path("templates"));
             return new Renderer($p);
         });
-        require_once app_path("Admin/functions.php");
+
+        $this->app->singleton(ResourceManager::class, function(){
+            return new ResourceManager();
+        });
+
+
     }
 
     /**
@@ -58,6 +70,10 @@ class AdminServiceProvider extends ServiceProvider
         });
 
         $this->bootValidatorRules();
+        $this->bootObservers();
+        $this->bootResources();
+
+        $this->mapAdminRoutes();
     }
 
 
@@ -77,5 +93,26 @@ class AdminServiceProvider extends ServiceProvider
             //字母开头  字母数字结尾  中间字母,数字,下划线,点   长度6-20
             return preg_match("/^[a-zA-Z0-9][a-zA-Z0-9_\.]{4,18}[a-zA-Z0-9]$/", $value) == 1;
         });
+    }
+
+    public function bootObservers(){
+        Relation::morphMap([
+            'article' => Article::class,
+        ]);
+
+        Article::observe(PostableObserver::class);
+    }
+
+    public function bootResources()
+    {
+        require_once admin_path("boot.php");
+    }
+
+    protected function mapAdminRoutes()
+    {
+        Route::prefix('admin')
+            ->middleware('admin')
+            ->namespace('App\\Admin\\Controllers')
+            ->group(app_path('Admin/route.php'));
     }
 }

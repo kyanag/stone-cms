@@ -1,10 +1,10 @@
 <?php
-/** @var \App\Admin\Widgets\Toolbar $toolbar */
+/** @var \App\Admin\Elements\Toolbar $toolbar */
 ?>
 <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="操作栏">
     <div class="btn-toolbar-left">
         @foreach($toolbar->getLinks("default") as $index => $link)
-            @if(isset($link['children']) && count($link['children']) > 0))
+            @if(isset($link['children']) && count($link['children']) > 0)
                 <div class="btn-group">
                     <a type="button" class="btn btn-{{ $link['type'] }}" href="{{ $link['url'] }}">{{ $link['title'] }}</a>
                     <button type="button" class="btn btn-primary dropdown-toggle active"
@@ -40,9 +40,7 @@
         <div class="btn-group pl-2" style="width: 100px" role="group">
             <button id="toolbar-sort" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">排序 </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="toolbar-sort">
-                @foreach($toolbar->getLinks(\App\Admin\Widgets\Toolbar::LINK_GROUP_SORT) as $index => $link)
-                <a class="dropdown-item" href="{{ $link['url'] }}">{{ $link['title'] }}</a>
-                @endforeach
+
             </div>
         </div>
     </div>

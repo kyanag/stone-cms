@@ -4,7 +4,7 @@
 namespace App\Admin\Controllers;
 
 
-use App\Admin\Interfaces\ResourceOperator;
+use App\Admin\Interfaces\ModelProxy;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -14,9 +14,9 @@ abstract class ViewController extends Controller
 {
 
     /**
-     * @return ResourceOperator
+     * @return ModelProxy
      */
-    abstract protected function getResourceOperator();
+    abstract protected function getModelProxy();
 
 
     /**
@@ -25,7 +25,7 @@ abstract class ViewController extends Controller
      */
     public function index(Request $request)
     {
-        $operator = $this->getResourceOperator();
+        $operator = $this->getModelProxy();
 
         return view("admin::common.index", [
             'operator' => $operator,
@@ -39,7 +39,7 @@ abstract class ViewController extends Controller
      */
     public function create(Request $request)
     {
-        $operator = $this->getResourceOperator();
+        $operator = $this->getModelProxy();
 
         return view("admin::common.create", [
             'operator' => $operator,
@@ -53,12 +53,13 @@ abstract class ViewController extends Controller
      */
     public function store(Request $request)
     {
-        $operator = $this->getResourceOperator();
+        /** @var ModelProxy $proxy */
+        $proxy = $this->getModelProxy();
 
-        $inputs = $operator->toForm()->submit($request->input());
-        $operator->inject($inputs);
+        $inputs = $proxy->toForm()->submit($request->input());
+        $proxy->fill($inputs);
 
-        if($operator->flush()){
+        if($proxy->fill($inputs)->save()){
             return back()->with("success", "保存成功!");
         }else{
             return back()->withInput()->with("danger", "保存失败!");
@@ -73,7 +74,7 @@ abstract class ViewController extends Controller
      */
     public function show($id)
     {
-        $operator = $this->getResourceOperator()
+        $operator = $this->getModelProxy()
             ->withRecord($id);
 
         return view("admin::common.show", [
@@ -89,7 +90,7 @@ abstract class ViewController extends Controller
      */
     public function edit($id)
     {
-        $operator = $this->getResourceOperator()
+        $operator = $this->getModelProxy()
             ->withRecord($id);
 
         return view("admin::common.edit", [
@@ -105,18 +106,18 @@ abstract class ViewController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $operator = $this->getResourceOperator()
+        $operator = $this->getModelProxy()
             ->withRecord($id);
-
         $inputs = $operator->toForm()->submit($request->input());
-        $operator->inject($inputs);
 
-        if($operator->flush()){
-            return back()->with("success", "更新[{$operator->showTitle()}] - {$operator['title']} 成功!");
+
+        $record = $operator->getRecord();
+        if($record->fill($inputs)->save()){
+            return back()->with("success", "[{$operator->showTitle()}] 更新成功!");
         }else{
             return back()
                 ->withInput()
-                ->with("danger", "更新[{$operator->showTitle()}] - {$operator['title']} 失败!");
+                ->with("danger", "[{$operator->showTitle()}] 更新失败!");
         }
     }
 
@@ -129,7 +130,7 @@ abstract class ViewController extends Controller
      */
     public function destroy($id)
     {
-        $operator = $this->getResourceOperator()
+        $operator = $this->getModelProxy()
             ->withRecord($id);
 
         if($operator->asDeprecated()->flush()){

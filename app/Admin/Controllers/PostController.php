@@ -2,10 +2,11 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Interfaces\ModelProxy;
+use App\Admin\ModelProxies\ArticleProxy;
+use App\Admin\ModelProxies\PostProxy;
 use Illuminate\Database\Eloquent\Model;
-use App\Admin\Models\CategoryView;
 
-class CategoryController extends ViewController
+class PostController extends ViewController
 {
 
     /**
@@ -15,11 +16,10 @@ class CategoryController extends ViewController
 
     /**
      * FormFieldController constructor.
-     * @param ModelProxy $operator
      */
-    public function __construct(CategoryView $operator)
+    public function __construct()
     {
-        $this->operator = $operator;
+        $this->operator = new PostProxy();
     }
 
 

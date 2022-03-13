@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Admin\Controllers\ViewController;
-use App\Admin\Interfaces\ResourceOperator;
+use App\Admin\Interfaces\ModelProxy;
 use App\Admin\Models\FormView;
 use Composer\Autoload\ClassLoader;
 use Illuminate\Console\Command;
@@ -79,7 +79,7 @@ class AdminControllerMaker extends Command
 <?php
 namespace App\Admin\Controllers;
 
-use App\Admin\Interfaces\ResourceOperator;
+use App\Admin\Interfaces\ModelProxy;
 use Illuminate\Database\Eloquent\Model;
 use {$vmClass};
 
@@ -87,13 +87,13 @@ class {$controllerBaseclass} extends ViewController
 {
 
     /**
-     * @var ResourceOperator|Model
+     * @var ModelProxy|Model
      */
     protected \$operator;
 
     /**
      * FormFieldController constructor.
-     * @param ResourceOperator \$operator
+     * @param ModelProxy \$operator
      */
     public function __construct({$vmBaseclass} \$operator)
     {

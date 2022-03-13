@@ -12,7 +12,7 @@ use App\Admin\Elements\Grid;
  * Interface ViewModelInterface
  * @package App\Admin\Interfaces
  */
-interface ResourceOperator
+interface ModelProxy
 {
 
     /**
@@ -38,18 +38,32 @@ interface ResourceOperator
 
     /**
      * 注入input内容
-     * @param array $inputs
-     * @return void
+     * @param array $attributes
+     * @return self
      */
-    public function inject(array $inputs);
-
+    public function fill(array $attributes);
 
     /**
      * 注入实体数据
      * @param mixed $record
-     * @return Model|array
+     * @return self
      */
     public function withRecord($record);
 
+
+    /**
+     * @return Model
+     */
     public function getRecord();
+
+
+    /**
+     * @return bool
+     */
+    public function save();
+
+    /**
+     * @return bool
+     */
+    public function delete();
 }

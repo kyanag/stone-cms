@@ -1,5 +1,5 @@
 <?php
-/** @var \App\Admin\Interfaces\ResourceOperator $operator */
+/** @var \App\Admin\Interfaces\ModelProxy $operator */
 
 $grid = $operator->toGrid();
 ?>

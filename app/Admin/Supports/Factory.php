@@ -7,6 +7,7 @@ namespace App\Admin\Supports;
 use App\Admin\Elements\ActiveForm;
 use App\Admin\Elements\Element;
 use App\Admin\Elements\Fields\Field;
+use App\Admin\Elements\Fields\OptionalField;
 use App\Admin\Elements\Grid\Column;
 use App\Admin\Elements\Grid;
 
@@ -23,16 +24,27 @@ class Factory
             }else{
                 $type = $field['type'];
                 unset($field['type']);
-
-                $element = new Field($type, $field);
+                switch ($type){
+                    case "radio":
+                    case "checkbox":
+                    case "select":
+                        $element = new OptionalField($type, $field);
+                        break;
+                    default:
+                        $element = new Field($type, $field);
+                        break;
+                }
             }
             if(is_int($key)){
                 $key = $element->getName();
             }
-            $children[] = $element->withValue($record[$key]);
+            if(isset($record[$key])){
+                $element = $element->withValue($record[$key]);
+            }
+            $children[$key] = $element;
         }
         return new ActiveForm("form", [
-            'submitText' => "登录"
+            'submitText' => "保存"
         ], $children);
     }
 
